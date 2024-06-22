@@ -40,6 +40,7 @@ namespace Cod.IoT.Networking.WiFi.Provisioning
 
             IConfigurationProvider configuration = (IConfigurationProvider)GetService(Constants.ConfigurationProviderID);
             configuration.Set(Constants.ConfigDevicePIN, pin);
+            configuration.Save();
             response.StatusCode = (int)HttpStatusCode.OK;
         }
 

@@ -63,6 +63,7 @@ namespace TSS.Acupressure.Motor
                     configuration.Set(Constants.ConfigMotorSequence, s);
                     configuration.Set(Constants.ConfigMotorInterval, interval);
                     configuration.Set(Constants.ConfigMotorDuration, duration);
+                    configuration.Save();
                     return true;
                 }
             }

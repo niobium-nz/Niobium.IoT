@@ -149,13 +149,20 @@ namespace Cod.IoT.Hub
             string json = desired.ToJson();
             Hashtable table = (Hashtable)JsonConvert.DeserializeObject(json, typeof(Hashtable));
             IConfigurationProvider configuration = (IConfigurationProvider)GetService(Constants.ConfigurationProviderID);
+            bool changed = false;
             foreach (object key in table.Keys)
             {
                 string k = (string)key;
                 if (k[0] != '$')
                 {
                     configuration.Set(k, table[key]);
+                    changed = true;
                 }
+            }
+
+            if (changed)
+            {
+                configuration.Save();
             }
         }
 
