@@ -1,4 +1,4 @@
-﻿namespace Cod.IoT.Button
+namespace Cod.IoT.Button
 {
     public delegate void ButtonEventHandler(int pin);
 
@@ -6,11 +6,15 @@
     {
         event ButtonEventHandler Pressed;
 
+        event ButtonEventHandler Released;
+
         event ButtonEventHandler Held;
 
-        void RegisterInterest(int pin, bool isHoldingEnabled);
+        void RegisterPress(int pin, bool isHoldingEnabled, byte pressPinValuePullUpMode);
+
+        void RegisterToggle(int pin, byte pressPinValuePullUpMode);
         
-        void UnregisterInterest(int pin);
+        void Unregister(int pin);
 
         void Start();
 

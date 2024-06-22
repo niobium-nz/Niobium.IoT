@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 
 namespace Cod.IoT
 {
@@ -10,8 +10,7 @@ namespace Cod.IoT
         {
             return new Hashtable
             {
-                { "c", 200 },
-                { "r", "Pong" }
+                { "m", "Pong" }
             };
         }
     }

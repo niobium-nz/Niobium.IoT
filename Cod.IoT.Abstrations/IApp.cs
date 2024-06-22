@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Cod.IoT
 {
@@ -6,16 +6,18 @@ namespace Cod.IoT
     {
         bool IsInitialized { get; }
 
-        void RegisterService(int id, IService service);
+        IApp RegisterService(IService service);
 
-        void RegisterComponent(IComponent component);
+        IApp RegisterComponent(IComponent component);
+
+        IApp UnregisterService(int id);
+
+        IApp UnregisterComponent(IComponent component);
 
         IService GetService(int id);
 
         void Launch();
 
         string GetFullName();
-
-        uint GarbageCollect(bool compactHeap);
     }
 }

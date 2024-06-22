@@ -1,18 +1,21 @@
-﻿namespace Cod.IoT.Networking.WiFi
+namespace Cod.IoT.Networking.WiFi
 {
     public static class AppExtensions
     {
         private static bool isLoaded = false;
 
-        public static IApp AddWiFi(this IApp app, bool autoConnect = true)
+        public static IComponent AutoConnectInitiator { get; private set; } = new AutoConnectInitiator();
+
+        public static IApp AddWiFi(this IApp app, bool autoConnect = true, bool enableCommandSupport = true)
         {
             if (!isLoaded)
             {
-                app.AddCore();
-                app.RegisterService(Constants.NetworkManagerID, new WiFiManager());
+                app.AddCore(enableCommandSupport)
+                   .RegisterService(new WiFiManager());
+
                 if (autoConnect)
                 {
-                    app.RegisterComponent(new AutoConnectInitiator());
+                    app.RegisterComponent(AutoConnectInitiator);
                 }
 
                 isLoaded = true;

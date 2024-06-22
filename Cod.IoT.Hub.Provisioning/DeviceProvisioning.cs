@@ -1,11 +1,11 @@
-﻿using Cod.IoT.Networking;
+using Cod.IoT.Networking;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 
 namespace Cod.IoT.Hub.Provisioning
 {
-    internal class DeviceProvisioning : GenericComponent
+    public class DeviceProvisioning : GenericComponent
     {
         private bool isStopRequested;
         private readonly string serverURL;

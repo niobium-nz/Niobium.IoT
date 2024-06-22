@@ -1,6 +1,6 @@
-﻿namespace Cod.IoT.Hub
+namespace Cod.IoT.Hub
 {
-    internal class Commander : GenericComponent
+    public class Commander : GenericComponent
     {
         private IHubService hubService;
         private ICommandService commandService;
@@ -24,7 +24,7 @@
             base.Dispose(disposing);
         }
 
-        private string HubService_CommandArrived(string payload)
+        protected virtual string HubService_CommandArrived(string payload)
         {
             return (string)commandService.Execute(payload);
         }

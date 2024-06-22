@@ -1,7 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
-using nanoFramework.Json;
 using System;
 using System.Collections;
+using Microsoft.Extensions.Logging;
+using nanoFramework.Json;
+using nanoFramework.Logging;
 
 namespace Cod.IoT
 {
@@ -17,18 +18,10 @@ namespace Cod.IoT
 
         public ICommandService Service { get; private set; }
 
-        protected GenericCommand()
-            : this(Cod.IoT.Logger.Instance)
-        {
-        }
-
-        protected GenericCommand(ILogger logger)
-        {
-            Logger = logger;
-        }
-
         public void Initialize(ICommandService service)
         {
+            Logger ??= LogDispatcher.LoggerFactory.CreateLogger(this.GetType().Name);
+
             if (!IsInitialized)
             {
                 Service = service;
@@ -59,7 +52,7 @@ namespace Cod.IoT
 
         public bool CanExecute(object parameters)
         {
-            return parameters != null && parameters is string payload && payload.Contains(CommandName);
+            return parameters != null && parameters is string payload && payload.Contains($"\"t\":\"{CommandName}\"");
         }
 
         public object Execute(object parameters)

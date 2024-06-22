@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 
 namespace Cod.IoT
 {
     public interface IService : IDisposable
     {
-        ushort ID { get; }
+        int ID { get; }
 
         bool IsInitialized { get; }
 

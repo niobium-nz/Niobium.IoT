@@ -1,8 +1,8 @@
-﻿namespace Cod.IoT.Hub
+namespace Cod.IoT.Hub
 {
     public abstract class Constants : Cod.IoT.Networking.Constants
     {
-        public const int HubServiceID = 5;
+        public const int HubServiceID = 6;
 
         public const string ConfigHubHost = "HubHost";
         public const string ConfigHubKey = "HubKey";

@@ -20,10 +20,11 @@
   <ItemGroup>
     <Compile Include="AppExtensions.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Helper.cs" />
+    <Compile Include="WiFiProvisioningHttpHandler.cs" />
     <Compile Include="WiFiProvisioningOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WebServer.cs" />
-    <Compile Include="WiFiProvissioningCoordinator.cs" />
+    <Compile Include="WiFiProvisioningCoordinator.cs" />
     <Compile Include="Wireless80211.cs" />
     <Compile Include="WirelessAP.cs" />
   </ItemGroup>
@@ -33,6 +34,9 @@
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>..\packages\nanoFramework.CoreLibrary.1.15.5\lib\mscorlib.dll</HintPath>
+    </Reference>
+    <Reference Include="nanoFramework.Json">
+      <HintPath>..\packages\nanoFramework.Json.2.2.117\lib\nanoFramework.Json.dll</HintPath>
     </Reference>
     <Reference Include="nanoFramework.Logging">
       <HintPath>..\packages\nanoFramework.Logging.1.1.94\lib\nanoFramework.Logging.dll</HintPath>
@@ -65,7 +69,7 @@
       <HintPath>..\packages\nanoFramework.System.Net.1.10.77\lib\System.Net.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http">
-      <HintPath>..\packages\nanoFramework.System.Net.Http.Server.1.5.134\lib\System.Net.Http.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.System.Net.Http.1.5.134\lib\System.Net.Http.dll</HintPath>
     </Reference>
     <Reference Include="System.Threading">
       <HintPath>..\packages\nanoFramework.System.Threading.1.1.32\lib\System.Threading.dll</HintPath>
@@ -78,6 +82,11 @@
     <ProjectReference Include="..\Cod.IoT.Abstrations\Cod.IoT.Abstrations.nfproj" />
     <ProjectReference Include="..\Cod.IoT.Button\Cod.IoT.Button.nfproj" />
     <ProjectReference Include="..\Cod.IoT.Core\Cod.IoT.Core.nfproj" />
+    <ProjectReference Include="..\Cod.IoT.Indicator\Cod.IoT.Indicator.nfproj" />
+    <ProjectReference Include="..\Cod.IoT.Networking.Web.FileSystem\Cod.IoT.Networking.Web.FileSystem.nfproj" />
+    <ProjectReference Include="..\Cod.IoT.Networking.Web\Cod.IoT.Networking.Web.nfproj" />
+    <ProjectReference Include="..\Cod.IoT.Networking.WiFi\Cod.IoT.Networking.WiFi.nfproj" />
+    <ProjectReference Include="..\Cod.IoT.Networking\Cod.IoT.Networking.nfproj" />
   </ItemGroup>
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets')" />
   <ProjectExtensions>

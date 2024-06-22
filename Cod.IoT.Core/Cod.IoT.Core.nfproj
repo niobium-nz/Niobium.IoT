@@ -20,15 +20,15 @@
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.props" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.props')" />
   <ItemGroup>
     <Compile Include="AppExtensions.cs" />
+    <Compile Include="StringExtensions.cs" />
+    <Compile Include="TaskService.cs" />
     <Compile Include="CommandService.cs" />
     <Compile Include="ConfigurationProvider.cs" />
     <Compile Include="GenericApp.cs" />
     <Compile Include="GenericCommand.cs" />
     <Compile Include="GenericComponent.cs" />
     <Compile Include="GenericService.cs" />
-    <Compile Include="DiagnosticLogger.cs" />
     <Compile Include="Helper.cs" />
-    <Compile Include="Logger.cs" />
     <Compile Include="PingCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

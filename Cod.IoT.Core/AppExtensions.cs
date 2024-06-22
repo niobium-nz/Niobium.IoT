@@ -1,18 +1,28 @@
-﻿namespace Cod.IoT
+using nanoFramework.Logging.Debug;
+using nanoFramework.Logging;
+
+namespace Cod.IoT
 {
     public static class AppExtensions
     {
         private static bool isLoaded = false;
         private static bool isCommandServiceLoaded = false;
 
+        public static ICommand PingCommand { get; private set; } = new PingCommand();
+
+        public static bool IsCommandSupportEnabled { get; private set; }
+
         public static IApp AddCore(this IApp app, bool enableCommandSupport = true)
         {
             if (!isLoaded)
             {
-                app.RegisterService(Constants.ConfigurationProviderID, new ConfigurationProvider());
+                LogDispatcher.LoggerFactory = new DebugLoggerFactory();
+
+                IsCommandSupportEnabled = enableCommandSupport;
+                app.RegisterService(new ConfigurationProvider());
                 if (enableCommandSupport)
                 {
-                    app.AddCommand(new PingCommand());
+                    app.RegisterCommand(PingCommand);
                 }
 
                 isLoaded = true;
@@ -21,11 +31,13 @@
             return app;
         }
 
-        public static IApp AddCommand(this IApp app, ICommand command)
+        public static IApp RegisterCommand(this IApp app, ICommand command)
         {
             if (!isCommandServiceLoaded)
             {
-                app.RegisterService(Constants.CommandServiceID, new CommandService());
+                app.RegisterService(new CommandService())
+                   .RegisterService(new TaskService());
+
                 isCommandServiceLoaded = true;
             }
 

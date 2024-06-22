@@ -1,29 +1,46 @@
-﻿using Microsoft.Extensions.Logging;
-using nanoFramework.Networking;
 using System;
+using System.IO;
 using System.Net.NetworkInformation;
 using System.Threading;
+using Microsoft.Extensions.Logging;
+using nanoFramework.Networking;
 
 namespace Cod.IoT.Networking.WiFi
 {
-    internal class WiFiManager : GenericService, INetworkManager
+    public class WiFiManager : GenericService, INetworkManager
     {
-        private Thread worker;
+        protected Thread worker;
 
-        public bool IsEstablished => WifiNetworkHelper.Status == NetworkHelperStatus.NetworkIsReady;
+        public virtual bool IsEstablished => WifiNetworkHelper.Status == NetworkHelperStatus.NetworkIsReady;
 
-        public override ushort ID => Constants.NetworkManagerID;
+        public override int ID => Constants.NetworkManagerID;
 
         public bool AutoConnect { get; set; } = false;
 
         public event EventHandler Established;
 
-        public void Connect()
+        protected virtual bool IsReady
+        {
+            get
+            {
+                Wireless80211Configuration wconf = Helper.GetWiFiConfiguration();
+                return wconf != null && !string.IsNullOrEmpty(wconf.Ssid);
+            }
+        }
+
+        public virtual void Connect()
         {
             if (worker == null)
             {
-                worker = new Thread(EnsureConnection);
-                worker.Start();
+                if (!File.Exists(Constants.NetworkProvinsioningRequestedFile))
+                {
+                    worker = new Thread(EnsureConnection);
+                    worker.Start();
+                }
+                else
+                {
+                    Logger.LogInformation($"WiFi not automatically connected due to its provinsioning status");
+                }
             }
         }
 
@@ -31,21 +48,17 @@ namespace Cod.IoT.Networking.WiFi
         {
             do
             {
-                if (IsEstablished)
+                if (IsEstablished || !IsReady)
                 {
                     Thread.Sleep(Constants.NetworkWaitInterval);
                     continue;
                 }
 
-                WifiNetworkHelper.SetupNetworkHelper(requiresDateTime: true);
-                NetworkHelper.NetworkReady.WaitOne(Constants.NetworkWaitInterval, true);
-
-                if (!IsEstablished)
+                if (!WifiNetworkHelper.Reconnect(true, token: new CancellationTokenSource(Constants.NetworkWaitInterval).Token))
                 {
-                    Logger.LogError($"WiFi connection failed with status {WifiNetworkHelper.Status}.");
                     if (WifiNetworkHelper.HelperException != null)
                     {
-                        Logger.LogError($"* Exception: {WifiNetworkHelper.HelperException.Message}\r\nSack = {WifiNetworkHelper.HelperException.StackTrace}");
+                        Logger.LogError(WifiNetworkHelper.HelperException, $"WiFi connection failed with status {WifiNetworkHelper.Status}.");
                     }
                     continue;
                 }

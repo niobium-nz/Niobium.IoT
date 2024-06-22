@@ -1,4 +1,4 @@
-﻿using nanoFramework.Networking;
+using nanoFramework.Networking;
 using System.Device.Wifi;
 using System.Net.NetworkInformation;
 using System.Threading;
@@ -8,60 +8,12 @@ namespace Cod.IoT.Networking.WiFi.Provisioning
     internal class Wireless80211
     {
         /// <summary>
-        /// Checks if the wireless 802.11 interface is enabled.
-        /// </summary>
-        /// <returns>
-        /// Returns true if the wireless 802.11 interface is enabled (i.e., the SSID is not null or empty), 
-        /// otherwise returns false.
-        /// </returns>
-        public static bool IsEnabled()
-        {
-            Wireless80211Configuration wconf = GetConfiguration();
-            return !string.IsNullOrEmpty(wconf.Ssid);
-        }
-
-        /// <summary>
-        /// Get current IP address. Only valid if successfully provisioned and connected
-        /// </summary>
-        /// <returns>IP address string</returns>
-        public static string GetCurrentIPAddress()
-        {
-            NetworkInterface ni = NetworkInterface.GetAllNetworkInterfaces()[0];
-
-            // get first NI ( Wifi on ESP32 )
-            return ni.IPv4Address.ToString();
-        }
-
-        /// <summary>
-        /// Coonnects to the Wifi or sets the Access Point mode.
-        /// </summary>
-        /// <returns>True if access point is setup.</returns>
-        public static bool ConnectOrSetAp(string ip, string ssid)
-        {
-            if (IsEnabled())
-            {
-                if (!WifiNetworkHelper.Reconnect(true, token: new CancellationTokenSource(30_000).Token))
-                {
-                    WirelessAP.SetWifiAp(ip, ssid);
-                    return true;
-                }
-            }
-            else
-            {
-                WirelessAP.SetWifiAp(ip, ssid);
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
         /// Disable the Wireless station interface.
         /// </summary>
         public static void Disable()
         {
-            Wireless80211Configuration wconf = GetConfiguration();
-            wconf.Options = Wireless80211Configuration.ConfigurationOptions.None | Wireless80211Configuration.ConfigurationOptions.SmartConfig;
+            Wireless80211Configuration wconf = Helper.GetWiFiConfiguration();
+            wconf.Options = Wireless80211Configuration.ConfigurationOptions.Disable;
             wconf.SaveConfiguration();
         }
 
@@ -82,7 +34,7 @@ namespace Cod.IoT.Networking.WiFi.Provisioning
             WifiNetworkHelper.Disconnect();
 
             // Reconfigure properly the normal wifi
-            Wireless80211Configuration wconf = GetConfiguration();
+            Wireless80211Configuration wconf = Helper.GetWiFiConfiguration();
             wconf.Options = Wireless80211Configuration.ConfigurationOptions.AutoConnect | Wireless80211Configuration.ConfigurationOptions.Enable;
             wconf.Ssid = ssid;
             wconf.Password = password;
@@ -102,31 +54,6 @@ namespace Cod.IoT.Networking.WiFi.Provisioning
             }
 
             return success;
-        }
-
-        /// <summary>
-        /// Get the Wireless station configuration.
-        /// </summary>
-        /// <returns>Wireless80211Configuration object</returns>
-        public static Wireless80211Configuration GetConfiguration()
-        {
-            NetworkInterface ni = GetInterface();
-            return Wireless80211Configuration.GetAllWireless80211Configurations()[ni.SpecificConfigId];
-        }
-
-        public static NetworkInterface GetInterface()
-        {
-            NetworkInterface[] Interfaces = NetworkInterface.GetAllNetworkInterfaces();
-
-            // Find WirelessAP interface
-            foreach (NetworkInterface ni in Interfaces)
-            {
-                if (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211)
-                {
-                    return ni;
-                }
-            }
-            return null;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Cod.IoT.Networking;
+using Cod.IoT.Networking;
 using Microsoft.Extensions.Logging;
 using nanoFramework.Azure.Devices.Client;
 using nanoFramework.Azure.Devices.Shared;
@@ -12,14 +12,14 @@ using System.Threading;
 
 namespace Cod.IoT.Hub
 {
-    internal class HubService : GenericService, IHubService
+    public class HubService : GenericService, IHubService
     {
         private Thread worker;
         private DeviceClient deviceClient;
 
         public bool IsConnected => deviceClient != null && deviceClient.IsConnected;
 
-        public override ushort ID => Constants.HubServiceID;
+        public override int ID => Constants.HubServiceID;
 
         public bool AutoConnect { get; set; } = false;
 
@@ -73,7 +73,7 @@ namespace Cod.IoT.Hub
                 {
                     FetchIniaialTwins();
                     ReportTwins();
-                    Logger.LogInformation($"Hub initialized with free memory left: {App.GarbageCollect(true)}.");
+                    Logger.LogInformation("Hub initialized successfully.");
                 }
                 else
                 {
@@ -94,7 +94,7 @@ namespace Cod.IoT.Hub
             } while (AutoConnect);
         }
 
-        public bool ReportTwins()
+        public virtual bool ReportTwins()
         {
             bool result = true;
             IConfigurationProvider configuration = (IConfigurationProvider)GetService(Constants.ConfigurationProviderID);
@@ -103,9 +103,9 @@ namespace Cod.IoT.Hub
                 try
                 {
                     result &= ReportTwins(new TwinCollection
-                    {
-                        { key, configuration.GetAsObject(key) }
-                    },
+                        {
+                            { key, configuration.GetAsObject(key) }
+                        },
                         Constants.DeviceTwinsReportMaxRetry);
                 }
                 catch (Exception ex)
@@ -180,7 +180,14 @@ namespace Cod.IoT.Hub
 
         protected virtual void DeviceClient_TwinUpdated(object sender, TwinUpdateEventArgs e)
         {
-            UpdateTwins(e.Twin);
+            try
+            {
+                UpdateTwins(e.Twin);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogCritical(ex, "Twins Updating has failed.");
+            }
         }
 
         protected virtual string Execute(int requestID, string payload)

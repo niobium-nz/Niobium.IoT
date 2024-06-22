@@ -1,30 +1,37 @@
-﻿using Microsoft.Extensions.Logging;
-using nanoFramework.Json;
 using System;
 using System.Collections;
 using System.IO;
+using System.Text;
+using Microsoft.Extensions.Logging;
+using nanoFramework.Json;
 
 namespace Cod.IoT
 {
     public class ConfigurationProvider : GenericService, IConfigurationProvider
     {
+        private ArrayList keys = new();
         private Hashtable configurations = new();
 
-        public override ushort ID => Constants.ConfigurationProviderID;
+        public override int ID => Constants.ConfigurationProviderID;
 
-        public IEnumerable Keys => configurations.Keys;
+        public IEnumerable Keys => keys;
 
-        public object GetAsObject(string key)
+        public virtual int GetAsNumber(string key)
         {
-            return configurations.Contains(key) ? configurations[key] : null;
+            return keys.Contains(key) ? (int)configurations[key] : 0;
         }
 
-        public string GetAsString(string key)
+        public virtual object GetAsObject(string key)
         {
-            return configurations.Contains(key) ? configurations[key] as string : null;
+            return keys.Contains(key) ? configurations[key] : null;
         }
 
-        public void Set(string key, object value)
+        public virtual string GetAsString(string key)
+        {
+            return keys.Contains(key) ? configurations[key] as string : null;
+        }
+
+        public virtual void Set(string key, object value)
         {
             if (string.IsNullOrEmpty(key))
             {
@@ -32,23 +39,25 @@ namespace Cod.IoT
             }
 
             Remove(key);
+            keys.Add(key);
             configurations.Add(key, value);
         }
 
-        public void Remove(string key)
+        public virtual void Remove(string key)
         {
             if (string.IsNullOrEmpty(key))
             {
                 return;
             }
 
-            if (configurations.Contains(key))
+            if (keys.Contains(key))
             {
                 configurations.Remove(key);
+                keys.Remove(key);
             }
         }
 
-        public void Save()
+        public virtual void Save()
         {
             try
             {
@@ -62,10 +71,13 @@ namespace Cod.IoT
 
         protected override void Initialize()
         {
-            File.Delete(Constants.AppSettingFile);
             if (File.Exists(Constants.AppSettingFile))
             {
                 configurations = (Hashtable)JsonConvert.DeserializeObject(File.ReadAllText(Constants.AppSettingFile), typeof(Hashtable));
+                foreach (string key in configurations.Keys)
+                {
+                    keys.Add(key);
+                }
             }
             else
             {
@@ -75,7 +87,11 @@ namespace Cod.IoT
 
         protected override void Rollback()
         {
-            File.WriteAllText(Constants.AppSettingFile, $"{{\"App\":\"{App.GetFullName()}\"}}");
+            var sb = new StringBuilder();
+            sb.Append($"{{\"App\":\"{App.GetFullName()}\"");
+            sb.Append("\"DevicePIN\":\"123\"");
+            sb.Append("}");
+            File.WriteAllText(Constants.AppSettingFile, sb.ToString());
         }
 
         protected override void Dispose(bool disposing)

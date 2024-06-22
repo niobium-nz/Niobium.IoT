@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
+using nanoFramework.Logging;
 using System;
 
 namespace Cod.IoT
@@ -10,24 +11,16 @@ namespace Cod.IoT
 
         public bool IsInitialized { get; private set; }
 
-        public abstract ushort ID { get; }
+        public abstract int ID { get; }
 
         public IApp App { get; private set; }
 
         public bool IsStarted { get; private set; }
 
-        protected GenericService()
-            : this(Cod.IoT.Logger.Instance)
-        {
-        }
-
-        protected GenericService(ILogger logger)
-        {
-            Logger = logger;
-        }
-
         public void Initialize(IApp app)
         {
+            Logger ??= LogDispatcher.LoggerFactory.CreateLogger(this.GetType().Name);
+
             if (!IsInitialized)
             {
                 App = app;

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 
 namespace Cod.IoT
 {
@@ -7,6 +7,8 @@ namespace Cod.IoT
         IEnumerable Keys { get; }
 
         object GetAsObject(string key);
+
+        int GetAsNumber(string key);
 
         string GetAsString(string key);
 

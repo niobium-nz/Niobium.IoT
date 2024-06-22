@@ -22,6 +22,8 @@
     <Compile Include="Constants.cs" />
     <Compile Include="IApp.cs" />
     <Compile Include="ICommand.cs" />
+    <Compile Include="IExtension.cs" />
+    <Compile Include="ITaskService.cs" />
     <Compile Include="ICommandService.cs" />
     <Compile Include="IComponent.cs" />
     <Compile Include="IConfigurationProvider.cs" />

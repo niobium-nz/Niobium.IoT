@@ -1,12 +1,12 @@
-﻿using System.Collections;
+using System.Collections;
 
 namespace Cod.IoT
 {
-    internal class CommandService : GenericService, ICommandService
+    public class CommandService : GenericService, ICommandService
     {
         private ArrayList commands;
 
-        public override ushort ID => Constants.CommandServiceID;
+        public override int ID => Constants.CommandServiceID;
 
         protected override void Initialize()
         {
@@ -40,7 +40,7 @@ namespace Cod.IoT
             base.Dispose(disposing);
         }
 
-        public object Execute(object payload)
+        public virtual object Execute(object payload)
         {
             if (payload == null)
             {
@@ -58,10 +58,27 @@ namespace Cod.IoT
             return "404";
         }
 
-        public void RegisterCommand(ICommand command)
+        public virtual void RegisterCommand(ICommand command)
         {
-            commands ??= new ArrayList();
-            commands.Add(command);
+            if (!IsInitialized)
+            {
+                commands ??= new ArrayList();
+                if (!commands.Contains(commands))
+                {
+                    commands.Add(command);
+                }
+            }
+        }
+
+        public virtual void UnregisterCommand(ICommand command)
+        {
+            if (!IsInitialized)
+            {
+                if (commands.Contains(command))
+                {
+                    commands.Remove(command);
+                }
+            }
         }
     }
 }

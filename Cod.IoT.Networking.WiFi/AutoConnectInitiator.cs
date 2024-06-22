@@ -1,4 +1,4 @@
-﻿namespace Cod.IoT.Networking.WiFi
+namespace Cod.IoT.Networking.WiFi
 {
     internal class AutoConnectInitiator : GenericComponent, IComponent
     {

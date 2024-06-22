@@ -1,15 +1,14 @@
-﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections;
 using System.Device.Gpio;
 using System.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace Cod.IoT.Button
 {
-    internal class ButtonService : GenericService, IButtonService
+    public class ButtonService : GenericService, IButtonService
     {
-        private DateTime _lastUpdateTime = DateTime.MinValue;
-
+        private static readonly object syncroot = new();
         private int readValueInterval;
         private TimeSpan holdMinimumDownTime;
         private TimeSpan holdMaximumDownTime;
@@ -21,101 +20,186 @@ namespace Cod.IoT.Button
         private Thread worker;
         private GpioController gpioController;
 
-        private Hashtable holdingEnabled;
-        private Hashtable pins;
-        private Hashtable initialDownTime;
+        private ArrayList pins = new();
+        private Hashtable togglePressTriggerred = new();
+        private Hashtable holdingEnabled = new();
+        private Hashtable gpios = new();
+        private Hashtable initialDownTime = new();
+        private Hashtable pressPinValue = new();
 
-        public override ushort ID => throw new NotImplementedException();
+        public override int ID => Constants.ButtonServiceID;
 
         public event ButtonEventHandler Pressed;
 
         public event ButtonEventHandler Held;
 
-        public void RegisterInterest(int pin, bool isHoldingEnabled)
+        public event ButtonEventHandler Released;
+
+        public virtual void RegisterPress(int pin, bool isHoldingEnabled, byte pressPinValuePullUpMode)
         {
-            gpioController ??= new GpioController();
+            Register(pin, pressPinValuePullUpMode, () => holdingEnabled.Add(pin, isHoldingEnabled));
 
-            pins ??= new Hashtable();
-            initialDownTime ??= new Hashtable();
-            if (isHoldingEnabled)
+            if (!holdingEnabled.Contains(pin))
             {
-                holdingEnabled ??= new Hashtable();
-            }
-
-            if (!pins.Contains(pin))
-            {
-                GpioPin gpioPin = gpioController.OpenPin(pin, PinMode.InputPullUp);
-                gpioPin.DebounceTimeout = debounceTimeout;
-                pins.Add(pin, gpioPin);
                 holdingEnabled.Add(pin, isHoldingEnabled);
             }
+            else
+            {
+                if (isHoldingEnabled && !(bool)holdingEnabled[pin])
+                {
+                    holdingEnabled[pin] = true;
+                }
+            }
         }
 
-        public void UnregisterInterest(int pin)
+        public virtual void RegisterToggle(int pin, byte pressPinValuePullUpMode)
         {
-            if (pins != null && pins.Contains(pin))
-            {
-                pins.Remove(pin);
-            }
-
-            if (holdingEnabled != null && holdingEnabled.Contains(pin))
-            {
-                holdingEnabled.Remove(pin);
-            }
-
-            gpioController?.ClosePin(pin);
+            Register(pin, pressPinValuePullUpMode, () => togglePressTriggerred.Add(pin, false));
         }
 
-        private void ReadGPIOValue()
+        protected virtual void Register(int pin, byte pressPinValuePullUpMode, Action init)
+        {
+            gpioController ??= new GpioController();
+            if (!pins.Contains(pin))
+            {
+                lock (syncroot)
+                {
+                    if (!pins.Contains(pin))
+                    {
+                        GpioPin gpioPin = gpioController.OpenPin(pin, PinMode.InputPullUp);
+                        gpioPin.DebounceTimeout = debounceTimeout;
+                        pins.Add(pin);
+                        gpios.Add(pin, gpioPin);
+                        pressPinValue.Add(pin, pressPinValuePullUpMode);
+                        init();
+                    }
+                }
+            }
+        }
+
+        public virtual void Unregister(int pin)
+        {
+            if (pins.Contains(pin))
+            {
+                lock (syncroot)
+                {
+                    if (pins.Contains(pin))
+                    {
+                        pins.Remove(pin);
+                        pressPinValue.Remove(pin);
+                        initialDownTime.Remove(pin);
+
+                        if (holdingEnabled.Contains(pin))
+                        {
+                            holdingEnabled.Remove(pin);
+                        }
+
+                        if (togglePressTriggerred.Contains(pin))
+                        {
+                            togglePressTriggerred.Remove(pin);
+                        }
+
+                        gpioController?.ClosePin(pin);
+                    }
+                }
+            }
+        }
+
+        protected virtual void DeterminePress(int pin, byte currentValue)
+        {
+            if (currentValue == (byte)pressPinValue[pin])
+            {
+                if (initialDownTime.Contains(pin))
+                {
+                    if (holdingEnabled.Contains(pin) && (bool)holdingEnabled[pin])
+                    {
+                        DateTime time = (DateTime)initialDownTime[pin];
+                        TimeSpan delta = DateTime.UtcNow - time;
+                        if (delta > holdMinimumDownTime && delta < holdMaximumDownTime)
+                        {
+                            // button has been pressed down for long enough so hold should be triggerred for a press button
+                            OnHeld(pin, delta);
+                        }
+                    }
+                }
+                else
+                {
+                    // button has been pressed in down status
+                    initialDownTime.Add(pin, DateTime.UtcNow);
+                }
+            }
+            else
+            {
+                if (initialDownTime.Contains(pin))
+                {
+                    DateTime time = (DateTime)initialDownTime[pin];
+                    TimeSpan delta = DateTime.UtcNow - time;
+                    if (delta > pressMinimumDownTime && delta < pressMaximumDownTime)
+                    {
+                        // button has been released in up status so pressed should be triggerred for a press button
+                        OnPressed(pin);
+                    }
+
+                    initialDownTime.Remove(pin);
+                }
+            }
+        }
+
+        protected virtual void DetermineToggle(int pin, byte currentValue)
+        {
+            if (currentValue == (byte)pressPinValue[pin])
+            {
+                if (initialDownTime.Contains(pin))
+                {
+                    DateTime time = (DateTime)initialDownTime[pin];
+                    TimeSpan delta = DateTime.UtcNow - time;
+                    if (delta > pressMinimumDownTime && !(bool)togglePressTriggerred[pin])
+                    {
+                        // button has been pressed down for long enough so pressed should be triggerred for a toggle button
+                        togglePressTriggerred[pin] = true;
+                        OnPressed(pin);
+                    }
+                }
+                else
+                {
+                    // button has been pressed in down status
+                    initialDownTime.Add(pin, DateTime.UtcNow);
+                }
+            }
+            else
+            {
+                if (initialDownTime.Contains(pin))
+                {
+                    if ((bool)togglePressTriggerred[pin])
+                    {
+                        // button has been released now in up status and because it had been pressed previously so released should be triggerred for a toggle button
+                        togglePressTriggerred[pin] = false;
+                        OnReleased(pin);
+                    }
+
+                    initialDownTime.Remove(pin);
+                }
+            }
+        }
+
+        protected virtual void ReadGPIOValue()
         {
             while (!stop)
             {
-                if (DateTime.UtcNow - _lastUpdateTime > TimeSpan.FromSeconds(30))
+                lock (syncroot)
                 {
-                    Logger.LogInformation($"Current free memory left: {App.GarbageCollect(true)}.");
-                    _lastUpdateTime = DateTime.UtcNow;
-                }
-
-
-                if (pins != null)
-                {
-                    foreach (object key in pins.Keys)
+                    foreach (int pin in pins)
                     {
-                        int pin = (int)key;
-                        GpioPin gpioPin = (GpioPin)pins[pin];
+                        GpioPin gpioPin = (GpioPin)gpios[pin];
                         byte v = (byte)gpioPin.Read();
-                        if (v == Constants.ButtonDownGPIOValue)
+
+                        if (togglePressTriggerred.Contains(pin))
                         {
-                            if (initialDownTime.Contains(pin))
-                            {
-                                if (holdingEnabled.Contains(pin) && (bool)holdingEnabled[pin])
-                                {
-                                    DateTime time = (DateTime)initialDownTime[pin];
-                                    TimeSpan delta = DateTime.UtcNow - time;
-                                    if (delta > holdMinimumDownTime && delta < holdMaximumDownTime)
-                                    {
-                                        OnHeld(pin);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                initialDownTime.Add(pin, DateTime.UtcNow);
-                            }
+                            DetermineToggle(pin, v);
                         }
                         else
                         {
-                            if (initialDownTime.Contains(pin))
-                            {
-                                DateTime time = (DateTime)initialDownTime[pin];
-                                TimeSpan delta = DateTime.UtcNow - time;
-                                if (delta > pressMinimumDownTime && delta < pressMaximumDownTime)
-                                {
-                                    OnPressed(pin);
-                                }
-
-                                initialDownTime.Remove(pin);
-                            }
+                            DeterminePress(pin, v);
                         }
                     }
                 }
@@ -154,6 +238,7 @@ namespace Cod.IoT.Button
 
                 gpioController.Dispose();
 
+                togglePressTriggerred.Clear();
                 holdingEnabled.Clear();
                 pins.Clear();
                 initialDownTime.Clear();
@@ -169,11 +254,19 @@ namespace Cod.IoT.Button
 
         protected virtual void OnPressed(int pin)
         {
+            Logger.LogDebug($"Pin {pin} is pressed");
             Pressed?.Invoke(pin);
         }
 
-        protected virtual void OnHeld(int pin)
+        protected virtual void OnReleased(int pin)
         {
+            Logger.LogDebug($"Pin {pin} is released");
+            Released?.Invoke(pin);
+        }
+
+        protected virtual void OnHeld(int pin, TimeSpan duration)
+        {
+            Logger.LogDebug($"Pin {pin} has been held for {duration}");
             Held?.Invoke(pin);
         }
 

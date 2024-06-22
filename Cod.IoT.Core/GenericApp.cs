@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections;
+using System.Threading;
+using Microsoft.Extensions.Logging;
+using nanoFramework.Logging;
 
 namespace Cod.IoT
 {
@@ -9,31 +11,29 @@ namespace Cod.IoT
         private bool disposed;
 
         protected ILogger Logger { get; private set; }
+        protected ArrayList ServiceIDs { get; private set; }
         protected Hashtable Services { get; private set; }
         protected ArrayList Components { get; private set; }
 
         public bool IsInitialized { get; private set; }
 
         protected GenericApp()
-            : this(Cod.IoT.Logger.Instance)
         {
+            ServiceIDs = new ArrayList();
             Services = new Hashtable();
             Components = new ArrayList();
-        }
-
-        protected GenericApp(ILogger logger)
-        {
-            Services = new Hashtable();
-            Components = new ArrayList();
-            Logger = logger;
         }
 
         public virtual void Launch()
         {
+            // Delay that allows IO initialization
+            Thread.Sleep(1000);
+
+            Logger ??= LogDispatcher.LoggerFactory.CreateLogger(this.GetType().Name);
             if (!IsInitialized)
             {
-                int[] serviceIds = new int[Services.Count];
-                Services.Keys.CopyTo(serviceIds, 0);
+                int[] serviceIds = new int[ServiceIDs.Count];
+                ServiceIDs.CopyTo(serviceIds, 0);
                 Helper.QuickSort(serviceIds);
 
                 foreach (int serviceId in serviceIds)
@@ -49,28 +49,60 @@ namespace Cod.IoT
             }
 
             IsInitialized = true;
-            Logger.LogInformation($"{GetFullName()} initialized with free memory left: {GarbageCollect(true)}");
+            var freeram = nanoFramework.Runtime.Native.GC.Run(true);
+            Logger.LogInformation($"{GetFullName()} initialized with free memory left: {freeram}");
         }
 
-        public void RegisterService(int id, IService service)
+        public IApp RegisterService(IService service)
         {
-            if (!IsInitialized && !disposed && !Services.Contains(id))
+            if (!IsInitialized && !disposed && !ServiceIDs.Contains(service.ID))
             {
-                Services.Add(id, service);
+                ServiceIDs.Add(service.ID);
+                Services.Add(service.ID, service);
             }
+
+            return this;
         }
 
-        public void RegisterComponent(IComponent component)
+        public IApp UnregisterService(int id)
+        {
+            if (!IsInitialized && !disposed && ServiceIDs.Contains(id))
+            {
+                Services.Remove(id);
+                ServiceIDs.Remove(id);
+            }
+
+            return this;
+        }
+
+        public IApp RegisterComponent(IComponent component)
         {
             if (!IsInitialized && !disposed && !Components.Contains(component))
             {
                 Components.Add(component);
             }
+
+            return this;
+        }
+
+        public IApp UnregisterComponent(IComponent component)
+        {
+            if (!IsInitialized && !disposed && Components.Contains(component))
+            {
+                Components.Remove(component);
+            }
+
+            return this;
         }
 
         public IService GetService(int id)
         {
-            return (IService)Services[id];
+            if (ServiceIDs.Contains(id))
+            {
+                return (IService)Services[id];
+            }
+
+            return null;
         }
 
         public void Dispose()
@@ -95,7 +127,7 @@ namespace Cod.IoT
 
                 Components.Clear();
 
-                foreach (object key in Services.Keys)
+                foreach (int key in ServiceIDs)
                 {
                     object service = Services[key];
                     if (service != null)
@@ -105,14 +137,10 @@ namespace Cod.IoT
                 }
 
                 Services.Clear();
+                ServiceIDs.Clear();
             }
         }
 
-        public abstract string GetFullName();
-
-        public uint GarbageCollect(bool compactHeap)
-        {
-            return nanoFramework.Runtime.Native.GC.Run(compactHeap);
-        }
+        public virtual string GetFullName() => GetType().Assembly.FullName;
     }
 }
