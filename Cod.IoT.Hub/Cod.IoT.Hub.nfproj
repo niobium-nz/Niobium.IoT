@@ -34,19 +34,19 @@
       <HintPath>..\packages\nanoFramework.CoreLibrary.1.15.5\lib\mscorlib.dll</HintPath>
     </Reference>
     <Reference Include="nanoFramework.Azure.Devices.Client">
-      <HintPath>..\packages\nanoFramework.Azure.Devices.Client.1.2.41\lib\nanoFramework.Azure.Devices.Client.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.Azure.Devices.Client.1.2.47\lib\nanoFramework.Azure.Devices.Client.dll</HintPath>
     </Reference>
     <Reference Include="nanoFramework.Json">
-      <HintPath>..\packages\nanoFramework.Json.2.2.117\lib\nanoFramework.Json.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.Json.2.2.122\lib\nanoFramework.Json.dll</HintPath>
     </Reference>
     <Reference Include="nanoFramework.Logging">
-      <HintPath>..\packages\nanoFramework.Logging.1.1.94\lib\nanoFramework.Logging.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.Logging.1.1.100\lib\nanoFramework.Logging.dll</HintPath>
     </Reference>
     <Reference Include="nanoFramework.M2Mqtt">
-      <HintPath>..\packages\nanoFramework.M2Mqtt.5.1.126\lib\nanoFramework.M2Mqtt.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.M2Mqtt.5.1.130\lib\nanoFramework.M2Mqtt.dll</HintPath>
     </Reference>
     <Reference Include="nanoFramework.M2Mqtt.Core">
-      <HintPath>..\packages\nanoFramework.M2Mqtt.5.1.126\lib\nanoFramework.M2Mqtt.Core.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.M2Mqtt.5.1.130\lib\nanoFramework.M2Mqtt.Core.dll</HintPath>
     </Reference>
     <Reference Include="nanoFramework.Runtime.Events">
       <HintPath>..\packages\nanoFramework.Runtime.Events.1.11.18\lib\nanoFramework.Runtime.Events.dll</HintPath>
@@ -73,10 +73,10 @@
       <HintPath>..\packages\nanoFramework.System.IO.Streams.1.1.59\lib\System.IO.Streams.dll</HintPath>
     </Reference>
     <Reference Include="System.Net">
-      <HintPath>..\packages\nanoFramework.System.Net.1.10.77\lib\System.Net.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.System.Net.1.10.79\lib\System.Net.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http">
-      <HintPath>..\packages\nanoFramework.System.Net.Http.1.5.134\lib\System.Net.Http.dll</HintPath>
+      <HintPath>..\packages\nanoFramework.System.Net.Http.1.5.138\lib\System.Net.Http.dll</HintPath>
     </Reference>
     <Reference Include="System.Threading">
       <HintPath>..\packages\nanoFramework.System.Threading.1.1.32\lib\System.Threading.dll</HintPath>
