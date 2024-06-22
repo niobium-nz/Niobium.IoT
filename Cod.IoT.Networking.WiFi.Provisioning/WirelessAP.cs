@@ -52,7 +52,7 @@ namespace Cod.IoT.Networking.WiFi.Provisioning
             wapconf.Ssid = $"{ssid}-{BitConverter.ToString(ni.PhysicalAddress).Substring(12)}";
 
             // Maximum number of simultaneous connections, reserves memory for connections
-            wapconf.MaxConnections = 1;
+            wapconf.MaxConnections = 3;
 
             // To set-up Access point with no Authentication
             //wapconf.Authentication = System.Net.NetworkInformation.AuthenticationType.Open;

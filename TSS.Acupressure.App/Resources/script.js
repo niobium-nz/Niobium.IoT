@@ -1,8 +1,8 @@
-// document.addEventListener('DOMContentLoaded', function() {
-//    refreshNetwork();
-//});
+document.addEventListener('DOMContentLoaded', function () {
+    refreshNetwork();
+});
 
-function showMessage(msg){
+function showMessage(msg) {
     document.getElementById('dlgTitle').innerText = 'Information';
     document.querySelector(".dialog-overlay").style.display = 'flex';
     document.getElementById('dlgMessageOption').style.display = 'none';
@@ -13,37 +13,35 @@ function hideMessage() {
     document.querySelector(".dialog-overlay").style.display = 'none';
 }
 
-function showProgressRing(){
+function showProgressRing() {
     document.getElementById('loader-wrapper').style.display = 'block';
 }
 
-function hideProgressRing(){
+function hideProgressRing() {
     document.getElementById('loader-wrapper').style.display = 'none';
 }
 
-function clearTable(){
+function clearTable() {
     document.querySelector("tbody").innerHTML = '';
 }
 
-function visiblity(tagId, isDisabled){
+function visiblity(tagId, isDisabled) {
     const tag = document.getElementById(tagId);
-    if(tag){
+    if (tag) {
         tag.disabled = isDisabled;
     }
 }
 
-function connectNetwork(){
+function connectNetwork() {
     ssid = document.getElementById('ssid').value;
     pass = document.getElementById('password').value;
-    if(!ssid || pass.length < 8){
-        alert('Your input is not valid');
+    if (!ssid || pass.length < 8) {
+        alert('Invalid input detected. Please retry.');
         return;
     }
     showProgressRing();
     visiblity('btnConnect', true);
-    //var json = `{"s":"${ssid}", "p":"${pass}"}`;
     var body = `ssid=${ssid}&pwd=${pass}&pin=123456`;
-    //fetchData(`/connect?p=${btoa(json)}`, 20000)
     Promise.race([
         fetch('/setup', {
             method: 'POST',
@@ -53,132 +51,70 @@ function connectNetwork(){
             setTimeout(() => reject(new Error('Timeout')), 20000)
         )
     ])
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            //var info = `\nSSID: ${data.ssid}\nIP: ${data.ip}\nSubnet: ${data.subnet}\nGateway: ${data.gateway}\n Mac: ${data.mac}`
-            showMessage(`Connection Successfully.${info}`);
-        } else {
-            showMessage('Your SSID or Password is not valid!');
-        }
-    })
-    .catch(error => {
-        showMessage('Request failed');
-    })
-    .finally(() => {
-        hideProgressRing();
-        visiblity('btnConnect', false);
-    });
+        .then(response => {
+            if (!response.ok) {
+                showMessage(response.body);
+            } else {
+                showMessage('WiFi has been setup successfully. Please unplug the power cable and replug it back in to continue.');
+            }
+        })
+        .catch(error => {
+            showMessage('Request has failed. Please retry.');
+        })
+        .finally(() => {
+            hideProgressRing();
+            visiblity('btnConnect', false);
+        });
 }
 
-function refreshNetwork(){
+function refreshNetwork() {
     showProgressRing();
     visiblity('btnRefresh', true);
-    fetchData('/networks.json', 15000)
-    .then(response => response.json())
-    .then(data => {
-        clearTable();
-        data.forEach((item, row) => {
-            addWiFi(++row, item.ssid, item.rssi, item.bssid, item.authmode, item.hidden);
-    });
-})
-.catch(() => {
-    showMessage("Can't fetch networks");
-    console.log("error to fetch networks");
-})
-.finally(() => {
-    hideProgressRing();
-    visiblity('btnRefresh', false);
-});
+    fetchData('/network-available', 15000)
+        .then(response => response.json())
+        .then(data => {
+            clearTable();
+            data.forEach((item, row) => {
+                addWiFi(++row, item.SSID, item.RSSI, item.BSSID);
+            });
+        })
+        .catch(() => {
+            showMessage("Unable to make a request to scan for network available. Please retry.");
+        })
+        .finally(() => {
+            hideProgressRing();
+            visiblity('btnRefresh', false);
+        });
 }
 
-function settings(){
+function settings() {
     document.getElementById('dlgTitle').innerText = 'Settings';
     document.getElementById('dlgMessage').innerText = '';
     document.getElementById('dlgMessageOption').style.display = 'block';
     document.querySelector(".dialog-overlay").style.display = 'flex';
 }
 
-function clearEEPROM(){
-    visiblity('btnClearEEPROM', true);
-    var btn = document.getElementById('btnClearEEPROM');
-    fetchData('/settings/clearEEPROM', 10000)
-    .then(data =>{
-        if(data.status === 200){
-            btn.innerText = 'Successfully';
-            btn.className = 'button button-success';
-        }
-        else{
-            btn.innerText = 'Failed';
-            btn.className = 'button button-danger';
-        }
-    })
-    .catch(() => {
-        btn.innerText = "Failed";
-        btn.className = "button button-danger";
-        alert("Can't clear EEPROM")
-        console.log('error to clear eeprom');
-    })
-    .finally(() => {
-        setTimeout(function(){
-            btn.className = 'button button-primary';
-            btn.innerText = 'Clear EEPROM';
-            visiblity('btnClearEEPROM', false);
-        }, 3000);
-    });
-}
-
-function rebootModule(){
-    visiblity('btnRebootModule', true);
-    var btn = document.getElementById('btnRebootModule');
-    fetchData('/settings/reboot', 5000)
-    .then(data =>{
-        if(data.status === 200){
-            btn.innerText = 'Successfully';
-            btn.className = 'button button-success';
-        }
-        else{
-            btn.innerText = 'Failed';
-            btn.className = "button button-danger";
-        }
-    })
-    .catch(() => {
-        btn.innerText = 'Failed';
-        btn.className = 'button button-danger';
-        alert("Can't reboot module");
-        console.log('error to reboot module');
-    })
-    .finally(() => {
-        setTimeout(function(){
-            btn.className = 'button button-primary';
-            btn.innerText = 'Reboot Module';
-            visiblity('btnRebootModule', false);
-        }, 3000);
-    });
-}
-
-function onClickItemTable(x){
+function onClickItemTable(x) {
     x.classList.add('selected');
     siblings = Array.from(x.parentNode.children);
     siblings.forEach((sibling) => {
-    if (sibling !== x) {
-        sibling.classList.remove('selected');
-    }
-});
+        if (sibling !== x) {
+            sibling.classList.remove('selected');
+        }
+    });
     var value = x.querySelector('td p').textContent;
-    if(value)
-    {
-        if(value !== '*HIDDEN*')
+    if (value) {
+        if (value !== '*HIDDEN*')
             document.getElementById('ssid').value = value;
         var passwordTag = document.getElementById('password');
         passwordTag.value = '';
         passwordTag.focus();
-    }  
+    }
 }
 
-function addWiFi(row, ssid,rssi, bssid, encryption, isHide){
+function addWiFi(row, ssid, rssi, bssid) {
     var newRow = document.createElement('tr');
-    newRow.onclick = function() {
+    newRow.onclick = function () {
         onClickItemTable(this);
     };
     var th = document.createElement('th');
@@ -186,41 +122,36 @@ function addWiFi(row, ssid,rssi, bssid, encryption, isHide){
     var p = document.createElement('p');
     var td2 = document.createElement('td');
     var td3 = document.createElement('td');
-    var td4 = document.createElement('td');
     th.textContent = row;
     newRow.appendChild(th);
-    p.textContent = isHide ? '*HIDDEN*' : ssid;
+    p.textContent = ssid ? ssid : '*HIDDEN*';
     td1.appendChild(p);
     newRow.appendChild(td1);
     td2.textContent = getSignal(rssi);
     newRow.appendChild(td2);
     td3.textContent = bssid;
     newRow.appendChild(td3);
-    td4.textContent = encIcon(encryption);
-    newRow.appendChild(td4);
     document.getElementById('table-body').appendChild(newRow);
 }
+
 function getSignal(rssi) {
     var percentage;
     if (rssi <= -100) {
-      percentage = 0;
+        percentage = 0;
     } else if (rssi >= -50) {
-      percentage = 100;
+        percentage = 100;
     } else {
-      percentage = 2 * (rssi + 100);
+        percentage = 2 * (rssi + 100);
     }
-    return `${percentage}%`;
-  }
-
-function encIcon(enc){
-    return `${enc} ${enc.toLowerCase() === 'open' ? '\u{1F513}' : '\u{1F510}'}`;
+    var rounded = Math.round(percentage * 10) / 10
+    return `${rounded}%`;
 }
 
 const fetchData = (url, timeout = 5000) => {
     return Promise.race([
-      fetch(url),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), timeout)
-      )
+        fetch(url),
+        new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Timeout')), timeout)
+        )
     ]);
 };

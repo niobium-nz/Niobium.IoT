@@ -1,19 +1,23 @@
-using nanoFramework.Networking;
+using System.Collections;
 using System.Device.Wifi;
 using System.Net.NetworkInformation;
 using System.Threading;
+using nanoFramework.Networking;
 
 namespace Cod.IoT.Networking.WiFi.Provisioning
 {
     internal class Wireless80211
     {
+        private static bool scanInProgress = false;
+        private static ArrayList wifiScanResult;
+
         /// <summary>
         /// Disable the Wireless station interface.
         /// </summary>
         public static void Disable()
         {
             Wireless80211Configuration wconf = Helper.GetWiFiConfiguration();
-            wconf.Options = Wireless80211Configuration.ConfigurationOptions.Disable;
+            wconf.Options = Wireless80211Configuration.ConfigurationOptions.None | Wireless80211Configuration.ConfigurationOptions.SmartConfig;
             wconf.SaveConfiguration();
         }
 
@@ -54,6 +58,54 @@ namespace Cod.IoT.Networking.WiFi.Provisioning
             }
 
             return success;
+        }
+
+        public static WiFiNetwork[] Scan()
+        {
+            wifiScanResult ??= new();
+            wifiScanResult.Clear();
+            WifiAdapter adapter = WifiAdapter.FindAllAdapters()[0];
+            adapter.AvailableNetworksChanged += Wifi_AvailableNetworksChanged;
+            adapter.ScanAsync();
+            scanInProgress = true;
+            var mslapsed = 0;
+            while (scanInProgress)
+            {
+                Thread.Sleep(Constants.WiFiScanCheckInterval);
+                mslapsed += Constants.WiFiScanCheckInterval;
+                if (mslapsed > Constants.WiFiScanTimeout)
+                {
+                    break;
+                }
+            }
+            var result = new WiFiNetwork[wifiScanResult.Count];
+            wifiScanResult.CopyTo(result);
+            wifiScanResult.Clear();
+            return result;
+        }
+
+        private static void Wifi_AvailableNetworksChanged(WifiAdapter sender, object e)
+        {
+            try
+            {
+                WifiNetworkReport report = sender.NetworkReport;
+                foreach (WifiAvailableNetwork net in report.AvailableNetworks)
+                {
+                    wifiScanResult.Add(new WiFiNetwork
+                    {
+                        SSID = net.Ssid,
+                        RSSI = net.NetworkRssiInDecibelMilliwatts,
+                        BSSID = net.Bsid,
+                    });
+                }
+            }
+            catch
+            {
+            }
+            finally
+            {
+                scanInProgress = false;
+            }
         }
     }
 }

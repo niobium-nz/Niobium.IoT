@@ -21,6 +21,8 @@
     <Compile Include="AppExtensions.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Helper.cs" />
+    <Compile Include="WiFiAPScanHttpHandler.cs" />
+    <Compile Include="WiFiNetwork.cs" />
     <Compile Include="WiFiProvisioningHttpHandler.cs" />
     <Compile Include="WiFiProvisioningOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

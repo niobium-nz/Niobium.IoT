@@ -10,6 +10,7 @@ namespace Cod.IoT.Networking.WiFi.Provisioning
         private static bool isLoaded = false;
 
         public static IHttpHandler WiFiProvisioningHttpHandler { get; private set; } = new WiFiProvisioningHttpHandler();
+        public static IHttpHandler WiFiAPScanHttpHandler { get; private set; } = new WiFiAPScanHttpHandler();
         public static IComponent WiFiProvisioningCoordinator { get; private set; }
 
         public static IApp AddWiFiProvisioning(this IApp app,
@@ -24,7 +25,7 @@ namespace Cod.IoT.Networking.WiFi.Provisioning
                 app.AddWiFi(autoConnect: autoConnect, enableCommandSupport: enableCommandSupport)
                    .AddButton(autoStartReadingGPIO: autoStartReadingGPIO, enableCommandSupport: enableCommandSupport)
                    .AddIndicator(enableCommandSupport)
-                   .AddWeb(wwwroot, wwwresourceprovider, new[] { WiFiProvisioningHttpHandler })
+                   .AddWeb(wwwroot, wwwresourceprovider, new[] { WiFiAPScanHttpHandler, WiFiProvisioningHttpHandler })
                    .RegisterComponent(WiFiProvisioningCoordinator);
 
                 isLoaded = true;

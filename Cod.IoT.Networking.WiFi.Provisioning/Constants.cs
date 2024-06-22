@@ -4,7 +4,10 @@ namespace Cod.IoT.Networking.WiFi.Provisioning
     {
         public const int WiFiProvinsioningPortalInitializationRetryInterval = 1000;
         public const int WiFiProvinsioningPortalSetupMaxRetry = 3;
+        public const int WiFiScanTimeout = 10000;
+        public const int WiFiScanCheckInterval = 500;
         public const string WiFiProvinsioningHandlerPath = "/setup";
+        public const string WiFiAPScanHandlerPath = "/network-available";
         public const string WiFiProvinsioningWWWRoot = @"I:\provisioning";
         public const string ConfigDevicePIN = "DevicePIN";
         public const string DefaultWiFiProvisioningAccessPointIPAddress = "192.168.177.1";
