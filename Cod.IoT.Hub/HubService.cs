@@ -25,6 +25,8 @@ namespace Cod.IoT.Hub
 
         public event CommandArrivedEventHandler CommandArrived;
 
+        public event EventHandler ConnectionChanged;
+
         public void Connect()
         {
             if (worker == null)
@@ -232,6 +234,10 @@ namespace Cod.IoT.Hub
                 Logger.LogCritical(ex, "IoT connection fail on open.");
                 return false;
             }
+            finally
+            {
+                OnConnectionChanged();
+            }
         }
 
         protected virtual void Close()
@@ -258,6 +264,11 @@ namespace Cod.IoT.Hub
         protected virtual string OnCommandArrived(string payload)
         {
             return CommandArrived?.Invoke(payload);
+        }
+
+        protected virtual void OnConnectionChanged()
+        {
+            ConnectionChanged?.Invoke(this, EventArgs.Empty);
         }
 
         protected override void Dispose(bool disposing)

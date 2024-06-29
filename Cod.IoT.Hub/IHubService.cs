@@ -1,4 +1,6 @@
-﻿namespace Cod.IoT.Hub
+using System;
+
+namespace Cod.IoT.Hub
 {
     public interface IHubService : IService
     {
@@ -7,6 +9,8 @@
         bool IsConnected { get; }
 
         event CommandArrivedEventHandler CommandArrived;
+
+        event EventHandler ConnectionChanged;
 
         void Connect();
 

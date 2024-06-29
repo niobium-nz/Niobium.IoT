@@ -8,7 +8,7 @@ namespace TSS.Acupressure.Motor
 {
     public class MotorDriver : GenericService, IMotorDriver
     {
-        private bool stop;
+        private bool stop = true;
         private Thread worker;
         private IConfigurationProvider configuration;
 
@@ -62,7 +62,7 @@ namespace TSS.Acupressure.Motor
             var s = configuration.GetAsString(Constants.ConfigMotorSequence);
             if (s != null)
             {
-                return Start(Helper.ParseMotorSequence(s), configuration.GetAsNumber(Constants.ConfigMotorDuration), configuration.GetAsNumber(Constants.ConfigMotorInterval));
+                return Start(Helper.ParseMotorSequence(s), configuration.GetAsNumber(Constants.ConfigMotorInterval), configuration.GetAsNumber(Constants.ConfigMotorDuration));
             }
             else
             {

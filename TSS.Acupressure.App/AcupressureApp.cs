@@ -1,5 +1,9 @@
+using System;
+using System.Threading;
 using Cod.IoT;
+using Cod.IoT.Hub;
 using Cod.IoT.Hub.Provisioning;
+using Cod.IoT.Indicator;
 using Cod.IoT.Networking.WiFi.Provisioning;
 using TSS.Acupressure.Motor;
 
@@ -24,6 +28,11 @@ namespace TSS.Acupressure.App
         private const string ProductName = "TAS-Acupressure";
         private const string ServerURL = "https://xxx.com";
 
+        private const int MotorReadyIndicationTimes = 2;
+        private const int HubReadyIndicationTimes = 3;
+
+        private IHubService hubService;
+
         public override void Launch()
         {
             if (!IsInitialized)
@@ -34,6 +43,52 @@ namespace TSS.Acupressure.App
             }
 
             base.Launch();
+
+            hubService = (IHubService)GetService(Cod.IoT.Hub.Constants.HubServiceID);
+            if (hubService.IsConnected)
+            {
+                Indicate(HubReadyIndicationTimes);
+            }
+            else
+            {
+                hubService.ConnectionChanged += HubService_ConnectionChanged;
+                Indicate(MotorReadyIndicationTimes);
+            }
+        }
+
+        protected virtual void HubService_ConnectionChanged(object sender, EventArgs e)
+        {
+            if (sender is IHubService hubService && hubService.IsConnected)
+            {
+                hubService.ConnectionChanged -= HubService_ConnectionChanged;
+                Indicate(HubReadyIndicationTimes);
+            }
+        }
+
+        protected virtual void Indicate(int times)
+        {
+            var indicatorService = (IIndicatorService)GetService(Cod.IoT.Indicator.Constants.IndicatorServiceID);
+            for (int i = 0; i < times; i++)
+            {
+                indicatorService.TurnOn(MotorSwitchLEDPin);
+                Thread.Sleep(300);
+                indicatorService.TurnOff(MotorSwitchLEDPin);
+                Thread.Sleep(300);
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (hubService != null)
+                { 
+                    hubService.ConnectionChanged -= HubService_ConnectionChanged;
+                }
+                hubService = null;
+            }
+
+            base.Dispose(disposing);
         }
     }
 }
