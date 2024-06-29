@@ -16,6 +16,11 @@ namespace Cod.IoT
 
         public IEnumerable Keys => keys;
 
+        public virtual bool GetAsBoolean(string key)
+        {
+            return keys.Contains(key) ? (bool)configurations[key] : false;
+        }
+
         public virtual int GetAsNumber(string key)
         {
             return keys.Contains(key) ? (int)configurations[key] : 0;

@@ -8,6 +8,8 @@ namespace Cod.IoT
 
         object GetAsObject(string key);
 
+        bool GetAsBoolean(string key);
+
         int GetAsNumber(string key);
 
         string GetAsString(string key);

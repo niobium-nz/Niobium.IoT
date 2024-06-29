@@ -14,10 +14,10 @@ namespace TSS.Acupressure.Motor
 
         bool Start();
 
-        bool Start(ArrayList motorSequence, int interval, int duration);
+        bool Start(ArrayList motorSequence, int interval, int duration, bool mirror);
 
         bool Stop();
 
-        bool SetCustomParameter(ArrayList sequence, int interval, int duration);
+        bool SetCustomParameter(ArrayList sequence, int interval, int duration, bool mirror);
     }
 }

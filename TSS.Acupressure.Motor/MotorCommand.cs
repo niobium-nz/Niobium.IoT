@@ -23,13 +23,15 @@ namespace TSS.Acupressure.Motor
             {
                 if (o.ToUpper() == Constants.BooleanStringTrue)
                 {
-                    if (parameters.Contains("i") && parameters["i"] is string i
-                        && parameters.Contains("s") && parameters["s"] is string s
-                        && parameters.Contains("d") && parameters["d"] is string d
-                        && !string.IsNullOrEmpty(i) && !string.IsNullOrEmpty(s) && !string.IsNullOrEmpty(d)
+                    if (parameters.Contains("i") && parameters["i"] is string i && !string.IsNullOrEmpty(i)
+                        && parameters.Contains("s") && parameters["s"] is string s && !string.IsNullOrEmpty(s)
+                        && parameters.Contains("d") && parameters["d"] is string d && !string.IsNullOrEmpty(d)
+                        && parameters.Contains("m") && parameters["m"] is string m && !string.IsNullOrEmpty(m)
                         && int.TryParse(i, out int interval) && int.TryParse(d, out int duration))
                     {
-                        result = motorDriver.Start(Helper.ParseMotorSequence(s), interval, duration);
+                        s = s.Trim();
+                        var mirror = m.Trim().ToUpper() == Constants.BooleanStringTrue;
+                        result = motorDriver.Start(Helper.ParseMotorSequence(s), interval, duration, mirror);
                     }
                     else
                     {

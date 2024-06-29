@@ -15,6 +15,7 @@ namespace TSS.Acupressure.Motor
         protected ArrayList activeMotorSequence = null;
         protected int activeInterval = -1;
         protected int activeDuration = -1;
+        protected bool activeMirror = false;
 
         protected readonly ShiftRegister controller;
 
@@ -39,7 +40,7 @@ namespace TSS.Acupressure.Motor
             Reset();
         }
 
-        public bool SetCustomParameter(ArrayList sequence, int interval, int duration)
+        public bool SetCustomParameter(ArrayList sequence, int interval, int duration, bool mirror)
         {
             if (sequence.Count > 0 && interval >= 0 && duration > Constants.MinimumMotorDuration)
             {
@@ -49,6 +50,7 @@ namespace TSS.Acupressure.Motor
                     configuration.Set(Constants.ConfigMotorSequence, s);
                     configuration.Set(Constants.ConfigMotorInterval, interval);
                     configuration.Set(Constants.ConfigMotorDuration, duration);
+                    configuration.Set(Constants.ConfigMotorMirror, mirror);
                     configuration.Save();
                     return true;
                 }
@@ -62,15 +64,23 @@ namespace TSS.Acupressure.Motor
             var s = configuration.GetAsString(Constants.ConfigMotorSequence);
             if (s != null)
             {
-                return Start(Helper.ParseMotorSequence(s), configuration.GetAsNumber(Constants.ConfigMotorInterval), configuration.GetAsNumber(Constants.ConfigMotorDuration));
+                return Start(
+                    Helper.ParseMotorSequence(s),
+                    configuration.GetAsNumber(Constants.ConfigMotorInterval),
+                    configuration.GetAsNumber(Constants.ConfigMotorDuration), 
+                    configuration.GetAsBoolean(Constants.ConfigMotorMirror));
             }
             else
             {
-                return Start(Constants.DefaultMotorSequence, Constants.DefaultMotorInterval, Constants.DefaultMotorDuration);
+                return Start(
+                    Constants.DefaultMotorSequence,
+                    Constants.DefaultMotorInterval,
+                    Constants.DefaultMotorDuration,
+                    Constants.DefaultMotorMirror);
             }
         }
 
-        public virtual bool Start(ArrayList motorSequence, int interval, int duration)
+        public virtual bool Start(ArrayList motorSequence, int interval, int duration, bool mirror)
         {
             if (motorSequence == null || motorSequence.Count <= 0 || interval < 0 || duration <= Constants.MinimumMotorDuration)
             {
@@ -82,6 +92,7 @@ namespace TSS.Acupressure.Motor
                 this.activeMotorSequence = motorSequence;
                 this.activeInterval = interval;
                 this.activeDuration = duration;
+                this.activeMirror = mirror;
 
                 Reset();
                 stop = false;
@@ -141,37 +152,105 @@ namespace TSS.Acupressure.Motor
         {
             switch (id)
             {
+                case 0:
+                    Reset();
+                    break;
                 case 1:
-                    controller.ShiftByte(0b_0000_0000, false);
-                    controller.ShiftByte(0b_0000_0001, true);
+                    if (activeMirror)
+                    {
+                        controller.ShiftByte(0b_0000_0001, false);
+                        controller.ShiftByte(0b_0000_0001, true);
+                    }
+                    else
+                    {
+                        controller.ShiftByte(0b_0000_0000, false);
+                        controller.ShiftByte(0b_0000_0001, true);
+                    }
                     break;
                 case 2:
-                    controller.ShiftByte(0b_0000_0000, false);
-                    controller.ShiftByte(0b_0000_0100, true);
+                    if (activeMirror)
+                    {
+                        controller.ShiftByte(0b_0000_0100, false);
+                        controller.ShiftByte(0b_0000_0100, true);
+                    }
+                    else
+                    {
+                        controller.ShiftByte(0b_0000_0000, false);
+                        controller.ShiftByte(0b_0000_0100, true);
+                    }
                     break;
                 case 3:
-                    controller.ShiftByte(0b_0000_0000, false);
-                    controller.ShiftByte(0b_0001_0000, true);
+                    if (activeMirror)
+                    {
+                        controller.ShiftByte(0b_0001_0000, false);
+                        controller.ShiftByte(0b_0001_0000, true);
+                    }
+                    else
+                    {
+                        controller.ShiftByte(0b_0000_0000, false);
+                        controller.ShiftByte(0b_0001_0000, true);
+                    }                    
                     break;
                 case 4:
-                    controller.ShiftByte(0b_0000_0000, false);
-                    controller.ShiftByte(0b_0100_0000, true);
+                    if (activeMirror)
+                    {
+                        controller.ShiftByte(0b_0100_0000, false);
+                        controller.ShiftByte(0b_0100_0000, true);
+                    }
+                    else
+                    {
+                        controller.ShiftByte(0b_0000_0000, false);
+                        controller.ShiftByte(0b_0100_0000, true);
+                    }
                     break;
                 case 5:
-                    controller.ShiftByte(0b_0000_0001, false);
-                    controller.ShiftByte(0b_0000_0000, true);
+                    if (activeMirror)
+                    {
+                        controller.ShiftByte(0b_0000_0001, false);
+                        controller.ShiftByte(0b_0000_0001, true);
+                    }
+                    else
+                    {
+                        controller.ShiftByte(0b_0000_0001, false);
+                        controller.ShiftByte(0b_0000_0000, true);
+                    }
+                    
                     break;
                 case 6:
-                    controller.ShiftByte(0b_0000_0100, false);
-                    controller.ShiftByte(0b_0000_0000, true);
+                    if (activeMirror)
+                    {
+                        controller.ShiftByte(0b_0000_0100, false);
+                        controller.ShiftByte(0b_0000_0100, true);
+                    }
+                    else
+                    {
+                        controller.ShiftByte(0b_0000_0100, false);
+                        controller.ShiftByte(0b_0000_0000, true);
+                    }
                     break;
                 case 7:
-                    controller.ShiftByte(0b_0001_0000, false);
-                    controller.ShiftByte(0b_0000_0000, true);
+                    if (activeMirror)
+                    {
+                        controller.ShiftByte(0b_0001_0000, false);
+                        controller.ShiftByte(0b_0001_0000, true);
+                    }
+                    else
+                    {
+                        controller.ShiftByte(0b_0001_0000, false);
+                        controller.ShiftByte(0b_0000_0000, true);
+                    }                    
                     break;
                 case 8:
-                    controller.ShiftByte(0b_0100_0000, false);
-                    controller.ShiftByte(0b_0000_0000, true);
+                    if (activeMirror)
+                    {
+                        controller.ShiftByte(0b_0100_0000, false);
+                        controller.ShiftByte(0b_0100_0000, true);
+                    }
+                    else
+                    {
+                        controller.ShiftByte(0b_0100_0000, false);
+                        controller.ShiftByte(0b_0000_0000, true);
+                    }                    
                     break;
                 default:
                     break;
