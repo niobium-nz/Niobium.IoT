@@ -42,7 +42,7 @@ namespace Cod.IoT.Networking.Web
 
         public virtual bool Start(int port, string ip)
         {
-            if (IsStarted)
+            if (IsRunning)
             {
                 return true;
             }

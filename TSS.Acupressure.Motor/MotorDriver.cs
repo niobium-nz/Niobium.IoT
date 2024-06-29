@@ -9,36 +9,22 @@ namespace TSS.Acupressure.Motor
     public class MotorDriver : GenericService, IMotorDriver
     {
         private bool stop;
-        private bool isCustomMode;
         private Thread worker;
         private IConfigurationProvider configuration;
 
-        protected ArrayList activeMotorSequence;
-        protected int activeInterval;
-        protected int activeDuration;
+        protected ArrayList activeMotorSequence = null;
+        protected int activeInterval = -1;
+        protected int activeDuration = -1;
 
         protected readonly ShiftRegister controller;
-
-        public bool IsCustomMode
-        {
-            get => isCustomMode;
-            set
-            {
-                if (isCustomMode != value)
-                {
-                    isCustomMode = value;
-                    OnModeChanged();
-                }
-            }
-        }
 
         public event EventHandler Started;
 
         public event EventHandler Stopped;
 
-        public event EventHandler ModeChanged;
-
         public override int ID => Constants.MotorDriverID;
+
+        public bool IsStarted => !stop;
 
         public MotorDriver(int srclkPin, int rclkPin, int serPin, int bitLength)
         {
@@ -73,12 +59,10 @@ namespace TSS.Acupressure.Motor
 
         public virtual bool Start()
         {
-            if (IsCustomMode)
+            var s = configuration.GetAsString(Constants.ConfigMotorSequence);
+            if (s != null)
             {
-                return Start(Helper.ParseMotorSequence(
-                    configuration.GetAsString(Constants.ConfigMotorSequence)),
-                    configuration.GetAsNumber(Constants.ConfigMotorInterval),
-                    configuration.GetAsNumber(Constants.ConfigMotorDuration));
+                return Start(Helper.ParseMotorSequence(s), configuration.GetAsNumber(Constants.ConfigMotorDuration), configuration.GetAsNumber(Constants.ConfigMotorInterval));
             }
             else
             {
@@ -202,11 +186,6 @@ namespace TSS.Acupressure.Motor
         protected virtual void OnStopped()
         {
             Stopped?.Invoke(this, EventArgs.Empty);
-        }
-
-        protected virtual void OnModeChanged()
-        {
-            ModeChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }

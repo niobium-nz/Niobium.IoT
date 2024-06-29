@@ -16,13 +16,12 @@ namespace TSS.Acupressure.Motor
 
         public static IApp AddMotor(this IApp app,
             int srclkPin, int rclkPin, int serPin, int bitLength,
-            int switchButtonPin, byte switchButtonPressPinValue, int modeButtonPin, byte modeButtonPressPinValue,
-            int motorSwitchLEDPIN = -1, int motorModeLEDPIN = -1,
+            int switchButtonPin, byte switchButtonPressPinValue, int motorSwitchLEDPIN = -1,
             bool autoStartReadingGPIO = true, bool enableCommandSupport = true)
         {
             if (!isLoaded)
             {
-                ButtonCoordinator = new ButtonCoordinator(switchButtonPin, switchButtonPressPinValue, modeButtonPin, modeButtonPressPinValue);
+                ButtonCoordinator = new ButtonCoordinator(switchButtonPin, switchButtonPressPinValue);
 
                 app.AddCore(enableCommandSupport)
                    .AddButton(autoStartReadingGPIO: autoStartReadingGPIO, enableCommandSupport: enableCommandSupport)
@@ -30,9 +29,9 @@ namespace TSS.Acupressure.Motor
                    .RegisterService(new MotorDriver(srclkPin, rclkPin, serPin, bitLength))
                    .RegisterComponent(ButtonCoordinator);
 
-                if (motorSwitchLEDPIN > 0 || motorModeLEDPIN > 0)
+                if (motorSwitchLEDPIN > 0)
                 {
-                    LEDCoordinator = new LEDCoordinator(motorSwitchLEDPIN, motorModeLEDPIN);
+                    LEDCoordinator = new LEDCoordinator(motorSwitchLEDPIN);
                     app.RegisterComponent(LEDCoordinator);
                 }
 

@@ -15,8 +15,6 @@ namespace Cod.IoT
 
         public IApp App { get; private set; }
 
-        public bool IsStarted { get; private set; }
-
         public void Initialize(IApp app)
         {
             Logger ??= LogDispatcher.LoggerFactory.CreateLogger(this.GetType().Name);

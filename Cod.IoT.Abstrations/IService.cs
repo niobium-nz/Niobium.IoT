@@ -8,8 +8,6 @@ namespace Cod.IoT
 
         bool IsInitialized { get; }
 
-        bool IsStarted { get; }
-
         IApp App { get; }
 
         void Initialize(IApp app);

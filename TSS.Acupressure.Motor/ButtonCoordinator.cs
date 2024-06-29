@@ -10,44 +10,33 @@ namespace TSS.Acupressure.Motor
 
         protected int switchButtonPin;
         protected byte switchButtonPressPinValue;
-        protected int modeButtonPin;
-        protected byte modeButtonPressPinValue;
 
-        public ButtonCoordinator(int switchButtonPin, byte switchButtonPressPinValue, int modeButtonPin, byte modeButtonPressPinValue)
+        public ButtonCoordinator(int switchButtonPin, byte switchButtonPressPinValue)
         {
             this.switchButtonPin = switchButtonPin;
             this.switchButtonPressPinValue = switchButtonPressPinValue;
-            this.modeButtonPin = modeButtonPin;
-            this.modeButtonPressPinValue = modeButtonPressPinValue;
         }
 
         protected override void Initialize()
         {
             driver = (IMotorDriver)GetService(Constants.MotorDriverID);
             buttonService = (IButtonService)GetService(Cod.IoT.Button.Constants.ButtonServiceID);
-            buttonService.RegisterToggle(switchButtonPin, switchButtonPressPinValue);
-            buttonService.RegisterPress(modeButtonPin, false, modeButtonPressPinValue);
+            buttonService.RegisterPress(switchButtonPin, false, switchButtonPressPinValue);
             buttonService.Pressed += ButtonService_Pressed;
-            buttonService.Released += ButtonService_Released;
         }
 
         protected virtual void ButtonService_Pressed(int pin)
         {
             if (pin == switchButtonPin)
             {
-                driver.Start();
-            }
-            else if (pin == modeButtonPin)
-            {
-                driver.IsCustomMode = !driver.IsCustomMode;
-            }
-        }
-
-        protected virtual void ButtonService_Released(int pin)
-        {
-            if (pin == switchButtonPin)
-            {
-                driver.Stop();
+                if (driver.IsStarted)
+                {
+                    driver.Stop();
+                }
+                else
+                {
+                    driver.Start();
+                }
             }
         }
     }

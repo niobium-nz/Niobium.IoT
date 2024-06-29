@@ -6,13 +6,11 @@ namespace TSS.Acupressure.Motor
 {
     public interface IMotorDriver : IService
     {
-        bool IsCustomMode { get; set; }
+        bool IsStarted { get; }
 
         event EventHandler Started;
 
         event EventHandler Stopped;
-
-        event EventHandler ModeChanged;
 
         bool Start();
 
