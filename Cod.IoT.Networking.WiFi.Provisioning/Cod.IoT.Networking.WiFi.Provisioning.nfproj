@@ -81,9 +81,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Cod.IoT.Abstrations\Cod.IoT.Abstrations.nfproj" />
+    <ProjectReference Include="..\Cod.IoT\Cod.IoT.Abstrations\Cod.IoT.Abstrations.nfproj" />
     <ProjectReference Include="..\Cod.IoT.Button\Cod.IoT.Button.nfproj" />
-    <ProjectReference Include="..\Cod.IoT.Core\Cod.IoT.Core.nfproj" />
+    <ProjectReference Include="..\Cod.IoT\Cod.IoT.Core\Cod.IoT.Core.nfproj" />
     <ProjectReference Include="..\Cod.IoT.Indicator\Cod.IoT.Indicator.nfproj" />
     <ProjectReference Include="..\Cod.IoT.Networking.Web.FileSystem\Cod.IoT.Networking.Web.FileSystem.nfproj" />
     <ProjectReference Include="..\Cod.IoT.Networking.Web\Cod.IoT.Networking.Web.nfproj" />

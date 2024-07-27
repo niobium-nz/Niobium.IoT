@@ -52,8 +52,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Cod.IoT.Abstrations\Cod.IoT.Abstrations.nfproj" />
-    <ProjectReference Include="..\Cod.IoT.Core\Cod.IoT.Core.nfproj" />
+    <ProjectReference Include="..\Cod.IoT\Cod.IoT.Abstrations\Cod.IoT.Abstrations.nfproj" />
+    <ProjectReference Include="..\Cod.IoT\Cod.IoT.Core\Cod.IoT.Core.nfproj" />
   </ItemGroup>
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets')" />
   <ProjectExtensions>
