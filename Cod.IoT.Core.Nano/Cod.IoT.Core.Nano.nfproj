@@ -8,31 +8,39 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectTypeGuids>{11A8DD76-328B-46DF-9F39-F559912D0360};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <ProjectGuid>1d70af89-12fb-4feb-a974-3bfa676d0de3</ProjectGuid>
+    <ProjectGuid>2331462e-76f5-4c9c-b5eb-78c1141ca7ad</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <FileAlignment>512</FileAlignment>
-    <RootNamespace>Cod.IoT.Networking.Web.FileSystem</RootNamespace>
-    <AssemblyName>Cod.IoT.Networking.Web.FileSystem</AssemblyName>
+    <RootNamespace>Cod.IoT.Nano</RootNamespace>
+    <AssemblyName>Cod.IoT.Core.Nano</AssemblyName>
     <TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.props" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.props')" />
   <ItemGroup>
     <Compile Include="AppExtensions.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="FileSystemHttpHandler.cs" />
-    <Compile Include="IFileBasedWWWResourceProvider.cs" />
+    <Compile Include="NanoJsonSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib">
       <HintPath>..\packages\nanoFramework.CoreLibrary.1.15.5\lib\mscorlib.dll</HintPath>
     </Reference>
+    <Reference Include="nanoFramework.Hardware.Esp32">
+      <HintPath>..\packages\nanoFramework.Hardware.Esp32.1.6.15\lib\nanoFramework.Hardware.Esp32.dll</HintPath>
+    </Reference>
+    <Reference Include="nanoFramework.Json">
+      <HintPath>..\packages\nanoFramework.Json.2.2.122\lib\nanoFramework.Json.dll</HintPath>
+    </Reference>
     <Reference Include="nanoFramework.Logging">
       <HintPath>..\packages\nanoFramework.Logging.1.1.100\lib\nanoFramework.Logging.dll</HintPath>
     </Reference>
     <Reference Include="nanoFramework.Runtime.Events">
       <HintPath>..\packages\nanoFramework.Runtime.Events.1.11.18\lib\nanoFramework.Runtime.Events.dll</HintPath>
+    </Reference>
+    <Reference Include="nanoFramework.Runtime.Native">
+      <HintPath>..\packages\nanoFramework.Runtime.Native.1.6.12\lib\nanoFramework.Runtime.Native.dll</HintPath>
     </Reference>
     <Reference Include="nanoFramework.System.Collections">
       <HintPath>..\packages\nanoFramework.System.Collections.1.5.31\lib\nanoFramework.System.Collections.dll</HintPath>
@@ -49,24 +57,12 @@
     <Reference Include="System.IO.Streams">
       <HintPath>..\packages\nanoFramework.System.IO.Streams.1.1.59\lib\System.IO.Streams.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net">
-      <HintPath>..\packages\nanoFramework.System.Net.1.10.79\lib\System.Net.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http">
-      <HintPath>..\packages\nanoFramework.System.Net.Http.1.5.138\lib\System.Net.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Threading">
-      <HintPath>..\packages\nanoFramework.System.Threading.1.1.32\lib\System.Threading.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Cod.IoT.Core.Nano\Cod.IoT.Core.Nano.nfproj" />
-    <ProjectReference Include="..\Cod.IoT.Networking.Web\Cod.IoT.Networking.Web.nfproj" />
-    <ProjectReference Include="..\Cod.IoT.Networking\Cod.IoT.Networking.nfproj" />
-  </ItemGroup>
+  <Import Project="..\Cod.IoT\Cod.IoT.Abstrations\Cod.IoT.Abstrations.projitems" Label="Shared" />
+  <Import Project="..\Cod.IoT\Cod.IoT.Core\Cod.IoT.Core.projitems" Label="Shared" />
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets')" />
   <ProjectExtensions>
     <ProjectCapabilities>
