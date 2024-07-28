@@ -21,8 +21,6 @@ Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "Cod.IoT.Networking.WiFi.Pro
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cod.IoT.Signatory", "Cod.IoT\Cod.IoT.Signatory\Cod.IoT.Signatory.csproj", "{96A8414D-A183-484B-BFBE-59299C863AB9}"
 EndProject
-Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "Cod.IoT.Core.Extendable", "Cod.IoT.Core.Extendable\Cod.IoT.Core.Extendable.nfproj", "{A6AA1833-1A7C-48FA-A751-578B92978F81}"
-EndProject
 Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "Cod.IoT.Core.Debug", "Cod.IoT.Core.Debug\Cod.IoT.Core.Debug.nfproj", "{E8223B12-3FB2-4F96-9419-67B24C9D7313}"
 EndProject
 Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "Cod.IoT.Networking.Web", "Cod.IoT.Networking.Web\Cod.IoT.Networking.Web.nfproj", "{05274253-3965-47E9-9C97-599DA399CA49}"
@@ -36,6 +34,8 @@ EndProject
 Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "TSS.Acupressure.Motor", "TSS.Acupressure.Motor\TSS.Acupressure.Motor.nfproj", "{CBC204A9-D379-45A4-AFED-C398682E6576}"
 EndProject
 Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "TSS.Acupressure.App", "TSS.Acupressure.App\TSS.Acupressure.App.nfproj", "{94148BD0-81D3-4454-ADEA-22D4F2997167}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Cod.IoT.Core.Extendable", "Cod.IoT\Cod.IoT.Core.Extendable\Cod.IoT.Core.Extendable.shproj", "{4E181B83-AF12-45F4-A6E8-C5C8430D3E28}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,11 +89,6 @@ Global
 		{96A8414D-A183-484B-BFBE-59299C863AB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96A8414D-A183-484B-BFBE-59299C863AB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96A8414D-A183-484B-BFBE-59299C863AB9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A6AA1833-1A7C-48FA-A751-578B92978F81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A6AA1833-1A7C-48FA-A751-578B92978F81}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A6AA1833-1A7C-48FA-A751-578B92978F81}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A6AA1833-1A7C-48FA-A751-578B92978F81}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A6AA1833-1A7C-48FA-A751-578B92978F81}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{E8223B12-3FB2-4F96-9419-67B24C9D7313}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E8223B12-3FB2-4F96-9419-67B24C9D7313}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8223B12-3FB2-4F96-9419-67B24C9D7313}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -138,6 +133,7 @@ Global
 		SolutionGuid = {B294D0B4-ECDC-4E95-998C-1A7F3E25A791}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Cod.IoT\Cod.IoT.Core.Extendable\Cod.IoT.Core.Extendable.projitems*{4e181b83-af12-45f4-a6e8-c5c8430d3e28}*SharedItemsImports = 13
 		Cod.IoT\Cod.IoT.Core\Cod.IoT.Core.projitems*{527e3732-e474-49b7-a1b7-d0ac0fd6aa04}*SharedItemsImports = 13
 		Cod.IoT\Cod.IoT.Abstrations\Cod.IoT.Abstrations.projitems*{bc79100d-d41c-4775-b932-9abfbbebbce1}*SharedItemsImports = 13
 	EndGlobalSection
