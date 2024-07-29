@@ -4,11 +4,11 @@ namespace Cod.IoT.Networking.Web
     {
         private static bool isLoaded = false;
 
-        public static IApp AddWeb(this IApp app, IHttpHandler[] httpHandlers)
+        public static IApp UseWeb(this IApp app, IHttpHandler[] httpHandlers)
         {
             if (!isLoaded)
             {
-                app.AddCore();
+                app.UseCore();
 
                 var server = new WebServer();
                 app.RegisterService(server);

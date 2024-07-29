@@ -6,11 +6,11 @@ namespace Cod.IoT.Networking.WiFi
 
         public static IComponent AutoConnectInitiator { get; private set; } = new AutoConnectInitiator();
 
-        public static IApp AddWiFi(this IApp app, bool autoConnect = true, bool enableCommandSupport = true)
+        public static IApp UseWiFi(this IApp app, bool autoConnect = true, bool enableCommandSupport = true)
         {
             if (!isLoaded)
             {
-                app.AddCore(enableCommandSupport)
+                app.UseCore(enableCommandSupport)
                    .RegisterService(new WiFiManager());
 
                 if (autoConnect)

@@ -5,11 +5,11 @@ namespace Cod.IoT.Networking.Web.FileSystem
         private static bool isLoaded = false;
         public static IHttpHandler FileSystemHttpHandler { get; private set; }
 
-        public static IApp AddWeb(this IApp app, string wwwroot, IFileBasedWWWResourceProvider wwwProvider, IHttpHandler[] httpHandlers = null)
+        public static IApp UseWeb(this IApp app, string wwwroot, IFileBasedWWWResourceProvider wwwProvider, IHttpHandler[] httpHandlers = null)
         {
             if (!isLoaded)
             {
-                app.AddWeb(httpHandlers);
+                app.UseWeb(httpHandlers);
 
                 FileSystemHttpHandler ??= new FileSystemHttpHandler(wwwroot, wwwProvider);
 

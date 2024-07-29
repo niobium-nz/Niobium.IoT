@@ -38,9 +38,9 @@ namespace TSS.Acupressure.App
         {
             if (!IsInitialized)
             {
-                this.AddWiFiProvisioning(WWWRoot, new WiFiProvisioningPortalResourceProvider(), WiFiProvisioningButtonPin, WiFiProvisioningButtonPressValue, new WiFiProvisioningOptions(ProductName), ledPin: WiFiProvisioningLEDPin)
-                    .AddDeviceProvisioning(ServerURL)
-                    .AddMotor(MotorSRCLKPin, MotorRCLKPin, MotorSERPin, MotorDriverBitLength, MotorSwitchButtonPin, MotorSwitchButtonPressValue, motorSwitchLEDPIN: MotorSwitchLEDPin);
+                this.UseWiFiProvisioning(WWWRoot, new WiFiProvisioningPortalResourceProvider(), WiFiProvisioningButtonPin, WiFiProvisioningButtonPressValue, new WiFiProvisioningOptions(ProductName), ledPin: WiFiProvisioningLEDPin)
+                    .UseDeviceProvisioning(ServerURL)
+                    .UseMotor(MotorSRCLKPin, MotorRCLKPin, MotorSERPin, MotorDriverBitLength, MotorSwitchButtonPin, MotorSwitchButtonPressValue, motorSwitchLEDPIN: MotorSwitchLEDPin);
             }
 
             base.Launch();

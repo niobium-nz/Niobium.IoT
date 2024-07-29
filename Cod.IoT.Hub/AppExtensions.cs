@@ -9,11 +9,11 @@ namespace Cod.IoT.Hub
         public static ICommand RebootCommand { get; private set; } = new RebootCommand();
         public static ICommand DownloadCommand { get; private set; } = new DownloadCommand();
 
-        public static IApp AddHub(this IApp app, bool autoConnect, bool enableCommandSupport = true)
+        public static IApp UseHub(this IApp app, bool autoConnect, bool enableCommandSupport = true)
         {
             if (!isLoaded)
             {
-                app.AddCore(enableCommandSupport)
+                app.UseCore(enableCommandSupport)
                    .RegisterService(new HubService());
 
                 if (autoConnect)

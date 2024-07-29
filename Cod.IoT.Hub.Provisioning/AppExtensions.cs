@@ -6,13 +6,13 @@ namespace Cod.IoT.Hub.Provisioning
 
         public static IComponent DeviceProvisioning { get; private set; }
 
-        public static IApp AddDeviceProvisioning(this IApp app, string serverURL, bool autoConnect = true, bool enableCommandSupport = true)
+        public static IApp UseDeviceProvisioning(this IApp app, string serverURL, bool autoConnect = true, bool enableCommandSupport = true)
         {
             if (!isLoaded)
             {
                 DeviceProvisioning ??= new DeviceProvisioning(serverURL);
 
-                app.AddHub(autoConnect: autoConnect, enableCommandSupport: enableCommandSupport)
+                app.UseHub(autoConnect: autoConnect, enableCommandSupport: enableCommandSupport)
                    .RegisterComponent(DeviceProvisioning);
 
                 isLoaded = true;

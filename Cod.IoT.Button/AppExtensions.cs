@@ -5,11 +5,11 @@ namespace Cod.IoT.Button
         private static bool isLoaded = false;
         public static IComponent AutoStartInitiator { get; private set; } = new AutoStartInitiator();
 
-        public static IApp AddButton(this IApp app, bool autoStartReadingGPIO = true, bool enableCommandSupport = true)
+        public static IApp UseButton(this IApp app, bool autoStartReadingGPIO = true, bool enableCommandSupport = true)
         {
             if (!isLoaded)
             {
-                app.AddCore(enableCommandSupport)
+                app.UseCore(enableCommandSupport)
                    .RegisterService(new ButtonService());
 
                 if (autoStartReadingGPIO)

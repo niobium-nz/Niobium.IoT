@@ -1,12 +1,17 @@
 using nanoFramework.Logging;
 using nanoFramework.Logging.Debug;
 
-namespace Cod.IoT.Nano
+namespace Cod.IoT
 {
     public static class AppExtensions
     {
         private static bool isLoaded = false;
-        public static IApp AddCore(this IApp app, bool enableCommandSupport = true)
+
+        public static ICommand PingCommand => Cod.IoT.Core.AppExtensions.PingCommand;
+
+        public static bool IsCommandSupportEnabled => Cod.IoT.Core.AppExtensions.IsCommandSupportEnabled;
+
+        public static IApp UseCore(this IApp app, bool enableCommandSupport = true)
         {
             if (!isLoaded)
             {
@@ -15,12 +20,15 @@ namespace Cod.IoT.Nano
 
                 JSON.Instance = new NanoJsonSerializer();
 
-                Cod.IoT.AppExtensions.AddCore(app, enableCommandSupport);
+                Cod.IoT.Core.AppExtensions.UseCore(app, enableCommandSupport);
 
                 isLoaded = true;
             }
 
             return app;
         }
+
+        public static IApp RegisterCommand(this IApp app, ICommand command)
+            => Cod.IoT.Core.AppExtensions.RegisterCommand(app, command);
     }
 }

@@ -4,11 +4,11 @@ namespace Cod.IoT.Indicator
     {
         private static bool isLoaded = false;
 
-        public static IApp AddIndicator(this IApp app, bool enableCommandSupport = true)
+        public static IApp UseIndicator(this IApp app, bool enableCommandSupport = true)
         {
             if (!isLoaded)
             {
-                app.AddCore(enableCommandSupport)
+                app.UseCore(enableCommandSupport)
                    .RegisterService(new IndicatorService());
 
                 isLoaded = true;

@@ -1,7 +1,7 @@
 using System;
 using nanoFramework.Json;
 
-namespace Cod.IoT.Nano
+namespace Cod.IoT
 {
     internal class NanoJsonSerializer : IJsonSerializer
     {

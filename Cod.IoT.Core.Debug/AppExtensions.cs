@@ -8,13 +8,13 @@ namespace Cod.IoT.Core.Debug
     {
         private static bool isLoaded = false;
 
-        public static IApp AddCoreDebug(this IApp app, int txPin, int rxPin, bool enableCommandSupport = true)
+        public static IApp UseCoreDebug(this IApp app, int txPin, int rxPin, bool enableCommandSupport = true)
         {
             if (!isLoaded)
             {
                 Configuration.SetPinFunction(rxPin, DeviceFunction.COM3_RX);
                 Configuration.SetPinFunction(txPin, DeviceFunction.COM3_TX);
-                app.AddCore(enableCommandSupport);
+                app.UseCore(enableCommandSupport);
                 LogDispatcher.LoggerFactory = new SerialLoggerFactory("COM3", 9600);
                 isLoaded = true;
             }
