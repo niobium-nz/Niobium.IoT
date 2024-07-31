@@ -24,10 +24,12 @@
     <Compile Include="IMotorDriver.cs" />
     <Compile Include="LEDCoordinator.cs" />
     <Compile Include="ButtonCoordinator.cs" />
-    <Compile Include="SetMotorCommand.cs" />
+    <Compile Include="SetMotorAction.cs" />
     <Compile Include="MotorDriver.cs" />
-    <Compile Include="MotorCommand.cs" />
+    <Compile Include="MotorAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="MotorCommand.cs" />
+    <Compile Include="SetMotorCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Iot.Device.Multiplexing">

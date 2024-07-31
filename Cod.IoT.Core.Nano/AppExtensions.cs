@@ -7,20 +7,26 @@ namespace Cod.IoT
     {
         private static bool isLoaded = false;
 
-        public static ICommand PingCommand => Cod.IoT.Core.AppExtensions.PingCommand;
+        public static IAction PingAction { get; private set; } = new PingAction();
 
-        public static bool IsCommandSupportEnabled => Cod.IoT.Core.AppExtensions.IsCommandSupportEnabled;
+        public static bool IsCommandSupportEnabled { get; private set; }
 
         public static IApp UseCore(this IApp app, bool enableCommandSupport = true)
         {
             if (!isLoaded)
             {
+                IsCommandSupportEnabled = enableCommandSupport;
+               
                 LogDispatcher.LoggerFactory = new DebugLoggerFactory();
                 LoggerFactory.Initialize(name => LogDispatcher.LoggerFactory.CreateLogger(name));
-
                 JSON.Instance = new NanoJsonSerializer();
 
-                Cod.IoT.Core.AppExtensions.UseCore(app, enableCommandSupport);
+                app.RegisterService(new ConfigurationProvider());
+
+                if (IsCommandSupportEnabled)
+                {
+                    app.RegisterAction(PingAction);
+                }
 
                 isLoaded = true;
             }
@@ -28,7 +34,20 @@ namespace Cod.IoT
             return app;
         }
 
-        public static IApp RegisterCommand(this IApp app, ICommand command)
-            => Cod.IoT.Core.AppExtensions.RegisterCommand(app, command);
+        public static IApp RegisterAction(this IApp app, IAction action)
+        {
+            if (!IsCommandSupportEnabled)
+            {
+                app.RegisterService(new CommandService())
+                   .RegisterService(new TaskService());
+
+                IsCommandSupportEnabled = true;
+            }
+
+            ICommandService commandService = (ICommandService)app.GetService(Constants.CommandServiceID);
+            commandService.RegisterAction(action);
+
+            return app;
+        }
     }
 }

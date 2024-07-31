@@ -22,6 +22,7 @@
     <Compile Include="AppExtensions.cs" />
     <Compile Include="NanoJsonSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RebootAction.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib">

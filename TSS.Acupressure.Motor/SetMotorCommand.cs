@@ -1,36 +1,19 @@
-using System.Collections;
 using Cod.IoT;
 
 namespace TSS.Acupressure.Motor
 {
-    public class SetMotorCommand : GenericCommand
+    public class SetMotorCommand : DeviceCommand
     {
-        private IMotorDriver driver;
+        public string S { get; set; }
+        public string Sequence => S;
 
-        protected override string CommandName => "SetMotor";
+        public int I { get; set; }
+        public int Interval => I;
 
-        protected override void Initialize()
-        {
-            base.Initialize();
-            driver = (IMotorDriver)GetService(Constants.MotorDriverID);
-        }
+        public int D { get; set; }
+        public int Duration => D;
 
-        protected override Hashtable ExecuteCore(Hashtable parameters)
-        {
-            bool result = false;
-
-            if (parameters.Contains("i") && parameters["i"] is string i && !string.IsNullOrEmpty(i)
-                && parameters.Contains("s") && parameters["s"] is string s && !string.IsNullOrEmpty(s)
-                && parameters.Contains("d") && parameters["d"] is string d && !string.IsNullOrEmpty(d)
-                && parameters.Contains("m") && parameters["m"] is string m && !string.IsNullOrEmpty(m)
-                && int.TryParse(i, out int interval) && int.TryParse(d, out int duration))
-            {
-                s = s.Trim();
-                var mirror = m.Trim().ToUpper() == Constants.BooleanStringTrue;
-                result = driver.SetCustomParameter(Helper.ParseMotorSequence(s), interval, duration, mirror);
-            }
-
-            return new Hashtable { { "r", result } };
-        }
+        public bool M { get; set; }
+        public bool Mirror => M;
     }
 }

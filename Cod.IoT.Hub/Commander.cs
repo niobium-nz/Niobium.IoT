@@ -24,9 +24,9 @@ namespace Cod.IoT.Hub
             base.Dispose(disposing);
         }
 
-        protected virtual string HubService_CommandArrived(string payload)
+        protected virtual DeviceCommandOutput HubService_CommandArrived(string payload)
         {
-            return (string)commandService.Execute(payload);
+            return commandService.Execute(payload);
         }
     }
 }

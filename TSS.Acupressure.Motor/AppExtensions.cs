@@ -11,8 +11,8 @@ namespace TSS.Acupressure.Motor
         public static IComponent LEDCoordinator { get; private set; }
         public static IComponent ButtonCoordinator { get; private set; }
 
-        public static ICommand MotorCommand { get; private set; }
-        public static ICommand SetMotorCommand { get; private set; }
+        public static IAction MotorAction { get; private set; }
+        public static IAction SetMotorAction { get; private set; }
 
         public static IApp UseMotor(this IApp app,
             int srclkPin, int rclkPin, int serPin, int bitLength,
@@ -37,11 +37,11 @@ namespace TSS.Acupressure.Motor
 
                 if (enableCommandSupport)
                 {
-                    MotorCommand = new MotorCommand();
-                    SetMotorCommand = new SetMotorCommand();
+                    MotorAction = new MotorAction();
+                    SetMotorAction = new SetMotorAction();
 
-                    app.RegisterCommand(MotorCommand)
-                       .RegisterCommand(SetMotorCommand);
+                    app.RegisterAction(MotorAction)
+                       .RegisterAction(SetMotorAction);
                 }
 
                 isLoaded = true;

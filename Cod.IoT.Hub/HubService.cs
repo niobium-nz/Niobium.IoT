@@ -201,7 +201,8 @@ namespace Cod.IoT.Hub
 
         protected virtual string Execute(int requestID, string payload)
         {
-            return OnCommandArrived(payload);
+            var result = OnCommandArrived(payload);
+            return JSON.Instance.Serialize(result);
         }
 
         protected virtual bool Open(string assignedIoTHub, string deviceID, string key)
@@ -261,7 +262,7 @@ namespace Cod.IoT.Hub
             }
         }
 
-        protected virtual string OnCommandArrived(string payload)
+        protected virtual DeviceCommandOutput OnCommandArrived(string payload)
         {
             return CommandArrived?.Invoke(payload);
         }
@@ -276,7 +277,10 @@ namespace Cod.IoT.Hub
             if (disposing)
             {
                 AutoConnect = false;
-                worker.Join(Constants.NetworkWaitInterval);
+                if (worker != null)
+                {
+                    worker.Join(Constants.NetworkWaitInterval);
+                }
                 worker = null;
                 Close();
             }
