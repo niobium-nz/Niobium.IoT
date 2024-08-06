@@ -5,7 +5,8 @@ namespace Cod.IoT.Hub
         public const int HubServiceID = 6;
 
         public const string ConfigHubHost = "HubHost";
-        public const string ConfigHubKey = "HubKey";
+        public const string ConfigHubPrimaryKey = "HubPrimaryKey";
+        public const string ConfigHubSecondaryKey = "HubSecondaryKey";
         public const string ConfigDeviceID = "DeviceID";
 
         public const int HubConnectionMaxRetry = 100;

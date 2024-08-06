@@ -33,6 +33,7 @@ function visiblity(tagId, isDisabled) {
 }
 
 function connectNetwork() {
+    pin = document.getElementById('pin').value;
     ssid = document.getElementById('ssid').value;
     pass = document.getElementById('password').value;
     if (!ssid || pass.length < 8) {
@@ -41,7 +42,7 @@ function connectNetwork() {
     }
     showProgressRing();
     visiblity('btnConnect', true);
-    var body = `ssid=${ssid}&pwd=${pass}&pin=123456`;
+    var body = `ssid=${ssid}&pwd=${pass}&pin=${pin}`;
     Promise.race([
         fetch('/setup', {
             method: 'POST',

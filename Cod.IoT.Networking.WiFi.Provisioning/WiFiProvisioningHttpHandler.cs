@@ -59,8 +59,7 @@ namespace Cod.IoT.Networking.WiFi.Provisioning
             }
 
             Thread.Sleep(200);
-            Logger.LogInformation("WiFi connection has been setup, rebooting...");
-            Power.RebootDevice();
+            Logger.LogInformation("WiFi connection has been setup, waiting on manual reboot...");
         }
     }
 }

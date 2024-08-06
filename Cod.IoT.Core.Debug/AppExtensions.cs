@@ -14,8 +14,11 @@ namespace Cod.IoT.Core.Debug
             {
                 Configuration.SetPinFunction(rxPin, DeviceFunction.COM3_RX);
                 Configuration.SetPinFunction(txPin, DeviceFunction.COM3_TX);
-                app.UseCore(enableCommandSupport);
+
                 LogDispatcher.LoggerFactory = new SerialLoggerFactory("COM3", 9600);
+                LoggerFactory.Initialize(LogDispatcher.LoggerFactory);
+
+                app.UseCore(enableCommandSupport);
                 isLoaded = true;
             }
 

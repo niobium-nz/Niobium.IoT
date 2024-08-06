@@ -4,20 +4,22 @@ namespace Cod.IoT.Networking.Web
     {
         private static bool isLoaded = false;
 
+        public static IWebServer WebServer { get; private set; }
+
         public static IApp UseWeb(this IApp app, IHttpHandler[] httpHandlers)
         {
             if (!isLoaded)
             {
                 app.UseCore();
 
-                var server = new WebServer();
-                app.RegisterService(server);
+                WebServer ??= new WebServer();
+                app.RegisterService(WebServer);
 
                 if (httpHandlers != null && httpHandlers.Length > 0)
                 {
                     foreach (var handler in httpHandlers)
                     {
-                        server.RegisterHandler(handler);
+                        WebServer.RegisterHandler(handler);
                     }
                 }
 

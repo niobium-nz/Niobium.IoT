@@ -22,12 +22,16 @@
     </div>
     <div class="div-container">
         <div class="form-group">
-            <label for="username">SSID</label>
+            <label for="username">WiFi SSID</label>
             <input type="text" id="ssid" placeholder="Enter your WiFi name">
         </div>
         <div class="form-group">
             <label for="password">Password</label>
             <input type="password" id="password" name="password" pattern=".{8,}" placeholder="Enter your password">
+        </div>
+        <div class="form-group">
+            <label for="pin">Device PIN</label>
+            <input type="number" id="pin" maxlength="10" placeholder="Enter your Device PIN">
         </div>
         <span>
             <button id="btnConnect" class="button button-primary" onclick="connectNetwork()">Connect</button>

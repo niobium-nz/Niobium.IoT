@@ -9,8 +9,8 @@ namespace Cod.IoT.Networking.WiFi.Provisioning
     {
         private static bool isLoaded = false;
 
-        public static IHttpHandler WiFiProvisioningHttpHandler { get; private set; } = new WiFiProvisioningHttpHandler();
-        public static IHttpHandler WiFiAPScanHttpHandler { get; private set; } = new WiFiAPScanHttpHandler();
+        public static IHttpHandler WiFiProvisioningHttpHandler { get; private set; }
+        public static IHttpHandler WiFiAPScanHttpHandler { get; private set; }
         public static IComponent WiFiProvisioningCoordinator { get; private set; }
 
         public static IApp UseWiFiProvisioning(this IApp app,
@@ -20,6 +20,8 @@ namespace Cod.IoT.Networking.WiFi.Provisioning
         {
             if (!isLoaded)
             {
+                WiFiProvisioningHttpHandler ??= new WiFiProvisioningHttpHandler();
+                WiFiAPScanHttpHandler ??= new WiFiAPScanHttpHandler();
                 WiFiProvisioningCoordinator ??= new WiFiProvisioningCoordinator(buttonPin, pressPinValue, options, ledPin);
 
                 app.UseWiFi(autoConnect: autoConnect, enableCommandSupport: enableCommandSupport)

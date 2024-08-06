@@ -21,8 +21,10 @@
     <Compile Include="AppExtensions.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="GenericHttpHandler.cs" />
+    <Compile Include="HTTP.cs" />
     <Compile Include="HttpListenerRequestExtensions.cs" />
     <Compile Include="HttpListenerResponseExtensions.cs" />
+    <Compile Include="HttpResponse.cs" />
     <Compile Include="IHttpHandler.cs" />
     <Compile Include="IWebServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

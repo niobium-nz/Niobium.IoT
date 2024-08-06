@@ -4,14 +4,18 @@ namespace Cod.IoT.Networking.WiFi
     {
         private static bool isLoaded = false;
 
-        public static IComponent AutoConnectInitiator { get; private set; } = new AutoConnectInitiator();
+        public static IComponent AutoConnectInitiator { get; private set; }
+        public static INetworkManager WiFiManager { get; private set; }
 
         public static IApp UseWiFi(this IApp app, bool autoConnect = true, bool enableCommandSupport = true)
         {
             if (!isLoaded)
             {
+                AutoConnectInitiator ??= new AutoConnectInitiator();
+                WiFiManager ??= new WiFiManager();
+
                 app.UseCore(enableCommandSupport)
-                   .RegisterService(new WiFiManager());
+                   .RegisterService(WiFiManager);
 
                 if (autoConnect)
                 {

@@ -7,6 +7,7 @@ namespace Cod.IoT
     {
         public object Deserialize(string json, Type type)
         {
+            nanoFramework.Json.Configuration.Settings.CaseSensitive = false;
             return JsonConvert.DeserializeObject(json, type);
         }
 

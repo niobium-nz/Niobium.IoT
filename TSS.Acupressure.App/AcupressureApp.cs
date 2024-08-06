@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using Cod.IoT;
+using Cod.IoT.Core.Debug;
 using Cod.IoT.Hub;
 using Cod.IoT.Hub.Provisioning;
 using Cod.IoT.Indicator;
@@ -26,8 +27,8 @@ namespace TSS.Acupressure.App
         private const int WiFiProvisioningLEDPin = 33;
 
         private const string WWWRoot = Cod.IoT.Networking.WiFi.Provisioning.Constants.WiFiProvinsioningWWWRoot;
-        private const string ProductName = "TAS-Acupressure";
-        private const string ServerURL = "https://xxx.com";
+        private const string ProductName = "TAPSS";
+        private const string ServerURL = "https://provisioning.tapss.care/v1/provisioning";
 
         private const int MotorReadyIndicationTimes = 2;
         private const int HubReadyIndicationTimes = 3;
@@ -38,7 +39,8 @@ namespace TSS.Acupressure.App
         {
             if (!IsInitialized)
             {
-                this.UseWiFiProvisioning(WWWRoot, new WiFiProvisioningPortalResourceProvider(), WiFiProvisioningButtonPin, WiFiProvisioningButtonPressValue, new WiFiProvisioningOptions(ProductName), ledPin: WiFiProvisioningLEDPin)
+                this.UseCoreDebug(18, 23, enableCommandSupport: true)
+                    .UseWiFiProvisioning(WWWRoot, new WiFiProvisioningPortalResourceProvider(), WiFiProvisioningButtonPin, WiFiProvisioningButtonPressValue, new WiFiProvisioningOptions(ProductName), ledPin: WiFiProvisioningLEDPin)
                     .UseDeviceProvisioning(ServerURL)
                     .UseMotor(MotorSRCLKPin, MotorRCLKPin, MotorSERPin, MotorDriverBitLength, MotorSwitchButtonPin, MotorSwitchButtonPressValue, motorSwitchLEDPIN: MotorSwitchLEDPin);
             }

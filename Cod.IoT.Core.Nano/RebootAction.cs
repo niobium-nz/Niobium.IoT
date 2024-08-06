@@ -5,7 +5,7 @@ namespace Cod.IoT
 {
     public class RebootAction : GenericAction
     {
-        protected override Type CommandType => throw new NotImplementedException();
+        protected override Type CommandType => typeof(RebootCommand);
 
         public override DeviceCommandOutput Execute(DeviceCommand command)
         {

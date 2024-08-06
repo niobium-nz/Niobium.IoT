@@ -8,6 +8,8 @@ namespace TSS.Acupressure.Motor
 {
     public class MotorDriver : GenericService, IMotorDriver
     {
+        private static readonly Random random = new(DateTime.UtcNow.Millisecond);
+
         private bool stop = true;
         private Thread worker;
         private IConfigurationProvider configuration;
@@ -150,6 +152,11 @@ namespace TSS.Acupressure.Motor
 
         protected virtual void DriveMotor(int id)
         {
+            if (id < 0)
+            {
+                id = random.Next(8);
+            }
+
             switch (id)
             {
                 case 0:

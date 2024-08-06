@@ -7,7 +7,10 @@ namespace Cod.IoT
     {
         private static bool isLoaded = false;
 
-        public static IAction PingAction { get; private set; } = new PingAction();
+        public static IConfigurationProvider ConfigurationProvider { get; private set; }
+        public static ITaskService TaskService { get; private set; }
+        public static ICommandService CommandService { get; private set; }
+        public static IAction PingAction { get; private set; }
 
         public static bool IsCommandSupportEnabled { get; private set; }
 
@@ -15,18 +18,25 @@ namespace Cod.IoT
         {
             if (!isLoaded)
             {
-                IsCommandSupportEnabled = enableCommandSupport;
-               
-                LogDispatcher.LoggerFactory = new DebugLoggerFactory();
-                LoggerFactory.Initialize(name => LogDispatcher.LoggerFactory.CreateLogger(name));
+                Constants.AppSettingFile = @"I:\appsettings.config";
+                Constants.ExtensionFolder = @"I:\extensions";
+                if (LogDispatcher.LoggerFactory == null)
+                {
+                    LogDispatcher.LoggerFactory = new DebugLoggerFactory();
+                    LoggerFactory.Initialize(LogDispatcher.LoggerFactory);
+                }
+
                 JSON.Instance = new NanoJsonSerializer();
 
-                app.RegisterService(new ConfigurationProvider());
+                IsCommandSupportEnabled = enableCommandSupport;
 
-                if (IsCommandSupportEnabled)
-                {
-                    app.RegisterAction(PingAction);
-                }
+                ConfigurationProvider = new ConfigurationProvider();
+                TaskService = new TaskService();
+                CommandService = new CommandService();
+                PingAction = new PingAction();
+
+                app.RegisterService(ConfigurationProvider)
+                    .RegisterAction(PingAction);
 
                 isLoaded = true;
             }
@@ -36,16 +46,13 @@ namespace Cod.IoT
 
         public static IApp RegisterAction(this IApp app, IAction action)
         {
-            if (!IsCommandSupportEnabled)
+            if (IsCommandSupportEnabled)
             {
-                app.RegisterService(new CommandService())
-                   .RegisterService(new TaskService());
+                app.RegisterService(CommandService)
+                   .RegisterService(TaskService);
 
-                IsCommandSupportEnabled = true;
+                CommandService.RegisterAction(action);
             }
-
-            ICommandService commandService = (ICommandService)app.GetService(Constants.CommandServiceID);
-            commandService.RegisterAction(action);
 
             return app;
         }

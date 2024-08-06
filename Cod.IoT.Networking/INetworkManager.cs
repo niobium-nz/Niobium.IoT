@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Cod.IoT.Networking
 {
@@ -7,6 +7,8 @@ namespace Cod.IoT.Networking
         bool AutoConnect { get; set; }
 
         bool IsEstablished { get; }
+
+        byte[] PhysicalAddress { get; }
 
         event EventHandler Established;
 

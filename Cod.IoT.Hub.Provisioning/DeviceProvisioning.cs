@@ -1,4 +1,5 @@
 using Cod.IoT.Networking;
+using Cod.IoT.Networking.Web;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
@@ -27,7 +28,7 @@ namespace Cod.IoT.Hub.Provisioning
             while (!isStopRequested)
             {
                 string host = configuration.GetAsString(Constants.ConfigHubHost);
-                string key = configuration.GetAsString(Constants.ConfigHubKey);
+                string key = configuration.GetAsString(Constants.ConfigHubPrimaryKey);
                 string deviceID = configuration.GetAsString(Constants.ConfigDeviceID);
                 if (!string.IsNullOrEmpty(host) && !string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(deviceID))
                 {
@@ -49,19 +50,62 @@ namespace Cod.IoT.Hub.Provisioning
                     continue;
                 }
 
-                Logger.LogInformation($"Provisioning deivce {deviceID} against {serverURL}...");
 
                 try
                 {
-                    configuration.Set(Constants.ConfigDeviceID, "test123");
-                    configuration.Set(Constants.ConfigHubHost, "testtashub1.azure-devices.net");
-                    configuration.Set(Constants.ConfigHubKey, "5n2i4cJBp/a0lIpT4tpwMy9TGqqAlHoy7AIoTF3IG8U=");
-                    configuration.Save();
-                    return;
+                    var mac = BitConverter.ToString(networkManager.PhysicalAddress);
+                    Logger.LogInformation($"Provisioning deivce {mac} against {serverURL}...");
+                    var response = HTTP.Post(serverURL, new DeviceProvisioningRequest
+                    {
+                        PIN = pin,
+                        UID = mac,
+                    });
+
+                    if (response == null)
+                    {
+                        Logger.LogError($"Device provisioning failed without response.");
+                        Thread.Sleep(Constants.NetworkWaitInterval);
+                        continue;
+                    }
+
+                    if (response.Status < 200 || response.Status >= 400)
+                    {
+                        Logger.LogError($"Device provisioning failed with status {response.Status}: {response.Body}.");
+                        Thread.Sleep(Constants.NetworkWaitInterval);
+                        continue;
+                    }
+
+                    if (response != null)
+                    {
+                        var result = (DeviceProvisioningResponse)JSON.Instance.Deserialize(response.Body, typeof(DeviceProvisioningResponse));
+                        if (result == null 
+                            || string.IsNullOrEmpty(result.DeviceID)
+                            || string.IsNullOrEmpty(result.PrimaryKey)
+                            || string.IsNullOrEmpty(result.SecondaryKey)
+                            || string.IsNullOrEmpty(result.AssignedHub))
+                        {
+                            Logger.LogError($"Device provisioning failed with invalid result: {response.Status}: {response.Body}.");
+                            Thread.Sleep(Constants.NetworkWaitInterval);
+                            continue;
+                        }
+
+                        configuration.Set(Constants.ConfigDeviceID, result.DeviceID);
+                        configuration.Set(Constants.ConfigHubHost, result.AssignedHub);
+                        configuration.Set(Constants.ConfigHubPrimaryKey, result.PrimaryKey);
+
+                        if (!string.IsNullOrEmpty(result.SecondaryKey))
+                        {
+                            configuration.Set(Constants.ConfigHubSecondaryKey, result.SecondaryKey);
+                        }
+
+                        configuration.Save();
+                        Logger.LogInformation($"Provisioning deivce {result.DeviceID} successfully assigned to {result.AssignedHub}.");
+                        return;
+                    }
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogCritical(ex, $"Device registration failed.");
+                    Logger.LogCritical(ex, "Device registration failed.");
                     Thread.Sleep(Constants.HubConnectionRetryInterval);
                     continue;
                 }

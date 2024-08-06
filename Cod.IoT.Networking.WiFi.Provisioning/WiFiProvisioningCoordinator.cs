@@ -100,8 +100,7 @@ namespace Cod.IoT.Networking.WiFi.Provisioning
             {
                 Logger.LogWarning($"Current IP is not expected: {ni.IPv4Address}");
                 ni.EnableStaticIPv4(options.IPAddress, options.Netmask, options.IPAddress);
-                Logger.LogInformation("Static IP updated, rebooting...");
-                Power.RebootDevice();
+                Logger.LogInformation("Static IP updated, waiting on manual reboot...");
                 return;
             }
 
@@ -114,8 +113,7 @@ namespace Cod.IoT.Networking.WiFi.Provisioning
 
             if (!result)
             {
-                Logger.LogError("Failed to setup WiFi provisioning portal, rebooting...");
-                Power.RebootDevice();
+                Logger.LogError("Failed to setup WiFi provisioning portal, waiting on manual reboot...");
             }
         }
 

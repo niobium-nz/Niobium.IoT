@@ -22,26 +22,21 @@ namespace TSS.Acupressure.Motor
             if (!isLoaded)
             {
                 ButtonCoordinator = new ButtonCoordinator(switchButtonPin, switchButtonPressPinValue);
+                MotorAction = new MotorAction();
+                SetMotorAction = new SetMotorAction();
 
                 app.UseCore(enableCommandSupport)
                    .UseButton(autoStartReadingGPIO: autoStartReadingGPIO, enableCommandSupport: enableCommandSupport)
                    .UseIndicator(enableCommandSupport)
                    .RegisterService(new MotorDriver(srclkPin, rclkPin, serPin, bitLength))
+                   .RegisterAction(MotorAction)
+                   .RegisterAction(SetMotorAction)
                    .RegisterComponent(ButtonCoordinator);
 
                 if (motorSwitchLEDPIN > 0)
                 {
                     LEDCoordinator = new LEDCoordinator(motorSwitchLEDPIN);
                     app.RegisterComponent(LEDCoordinator);
-                }
-
-                if (enableCommandSupport)
-                {
-                    MotorAction = new MotorAction();
-                    SetMotorAction = new SetMotorAction();
-
-                    app.RegisterAction(MotorAction)
-                       .RegisterAction(SetMotorAction);
                 }
 
                 isLoaded = true;

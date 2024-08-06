@@ -59,7 +59,7 @@ namespace Cod.IoT.Hub
 
                 IConfigurationProvider configuration = (IConfigurationProvider)GetService(Constants.ConfigurationProviderID);
                 string host = configuration.GetAsString(Constants.ConfigHubHost);
-                string key = configuration.GetAsString(Constants.ConfigHubKey);
+                string key = configuration.GetAsString(Constants.ConfigHubPrimaryKey);
                 string deviceID = configuration.GetAsString(Constants.ConfigDeviceID);
 
                 if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(key) || string.IsNullOrEmpty(deviceID))
@@ -84,7 +84,7 @@ namespace Cod.IoT.Hub
                     {
                         Logger.LogError($"Device {deviceID} cannot connect to {host} after several attempts.");
                         configuration.Remove(Constants.ConfigHubHost);
-                        configuration.Remove(Constants.ConfigHubKey);
+                        configuration.Remove(Constants.ConfigHubPrimaryKey);
                         configuration.Remove(Constants.ConfigDeviceID);
                         configuration.Save();
                         Logger.LogError($"Device provinsioning data purged.");

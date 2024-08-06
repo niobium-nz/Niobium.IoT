@@ -28,6 +28,8 @@ namespace Cod.IoT.Networking.WiFi
             }
         }
 
+        public byte[] PhysicalAddress => Helper.GetWiFiInterface().PhysicalAddress;
+
         public virtual void Connect()
         {
             if (worker == null)
