@@ -1,5 +1,6 @@
 using System.IO;
 using System.Net;
+using Microsoft.Extensions.Logging;
 
 namespace Cod.IoT.Networking.Web.FileSystem
 {
@@ -30,9 +31,36 @@ namespace Cod.IoT.Networking.Web.FileSystem
                         {
                             try
                             {
+                                var versionFile = $"{resource}.ver";
+                                if (File.Exists(resource))
+                                {
+                                    if (File.Exists(versionFile))
+                                    {
+                                        var buff = File.ReadAllText(versionFile);
+                                        if (int.TryParse(buff, out var version))
+                                        {
+                                            var version2 = Provider.GetResourceVersion(resource);
+                                            if (version != version2)
+                                            {
+                                                File.Delete(resource);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            File.Delete(resource);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        File.Delete(resource);
+                                    }
+                                }
+
                                 if (!File.Exists(resource))
                                 {
-                                    File.WriteAllText(resource, content);
+                                    File.WriteAllBytes(resource, content);
+                                    File.WriteAllText(versionFile, Provider.GetResourceVersion(resource).ToString());
+                                    Logger.LogDebug($"Deployed www resource {resource} due to its unavailablity.");
                                 }
                             }
                             catch

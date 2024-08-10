@@ -63,6 +63,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Resources\KFOmCnqEu92Fr1Mu4mxK.woff2" />
+    <None Include="Resources\KFOmCnqEu92Fr1Mu4WxKOzY.woff2" />
+    <None Include="Resources\KFOmCnqEu92Fr1Mu5mxKOzY.woff2" />
+    <None Include="Resources\KFOmCnqEu92Fr1Mu72xKOzY.woff2" />
+    <None Include="Resources\KFOmCnqEu92Fr1Mu7GxKOzY.woff2" />
+    <None Include="Resources\KFOmCnqEu92Fr1Mu7mxKOzY.woff2" />
+    <None Include="Resources\KFOmCnqEu92Fr1Mu7WxKOzY.woff2" />
     <None Include="Resources\script.js" />
   </ItemGroup>
   <ItemGroup>

@@ -119,12 +119,33 @@
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="index" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\index.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;gb2312</value>
+    <value>Resources\index.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="KFOmCnqEu92Fr1Mu4mxK" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\KFOmCnqEu92Fr1Mu4mxK.woff2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="KFOmCnqEu92Fr1Mu4WxKOzY" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\KFOmCnqEu92Fr1Mu4WxKOzY.woff2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="KFOmCnqEu92Fr1Mu5mxKOzY" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\KFOmCnqEu92Fr1Mu5mxKOzY.woff2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="KFOmCnqEu92Fr1Mu72xKOzY" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\KFOmCnqEu92Fr1Mu72xKOzY.woff2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="KFOmCnqEu92Fr1Mu7GxKOzY" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\KFOmCnqEu92Fr1Mu7GxKOzY.woff2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="KFOmCnqEu92Fr1Mu7mxKOzY" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\KFOmCnqEu92Fr1Mu7mxKOzY.woff2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="KFOmCnqEu92Fr1Mu7WxKOzY" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\KFOmCnqEu92Fr1Mu7WxKOzY.woff2;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="script" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\script.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;gb2312</value>
+    <value>Resources\script.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="style" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\style.css;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;gb2312</value>
+    <value>Resources\style.css;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
 </root>

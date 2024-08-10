@@ -1,138 +1,21 @@
-document.addEventListener('DOMContentLoaded', function () {
-    refreshNetwork();
-});
-
-function showMessage(msg) {
-    document.getElementById('dlgTitle').innerText = 'Information';
-    document.querySelector(".dialog-overlay").style.display = 'flex';
-    document.getElementById('dlgMessageOption').style.display = 'none';
-    document.getElementById('dlgMessage').innerText = msg;
-}
-
-function hideMessage() {
-    document.querySelector(".dialog-overlay").style.display = 'none';
-}
-
-function showProgressRing() {
-    document.getElementById('loader-wrapper').style.display = 'block';
-}
-
-function hideProgressRing() {
-    document.getElementById('loader-wrapper').style.display = 'none';
-}
-
-function clearTable() {
-    document.querySelector("tbody").innerHTML = '';
-}
-
-function visiblity(tagId, isDisabled) {
-    const tag = document.getElementById(tagId);
-    if (tag) {
-        tag.disabled = isDisabled;
-    }
-}
-
-function connectNetwork() {
-    pin = document.getElementById('pin').value;
-    ssid = document.getElementById('ssid').value;
-    pass = document.getElementById('password').value;
-    if (!ssid || pass.length < 8) {
-        alert('Invalid input detected. Please retry.');
-        return;
-    }
-    showProgressRing();
-    visiblity('btnConnect', true);
-    var body = `ssid=${ssid}&pwd=${pass}&pin=${pin}`;
-    Promise.race([
-        fetch('/setup', {
-            method: 'POST',
-            body: body
-        }),
+﻿function getAvailableNetworks() {
+    return Promise.race([
+        fetch('/network-available'),
         new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Timeout')), 20000)
+            setTimeout(() => reject(new Error('Timeout')), 10000)
         )
     ])
-        .then(response => {
-            if (!response.ok) {
-                showMessage(response.body);
-            } else {
-                showMessage('WiFi has been setup successfully. Please unplug the power cable and replug it back in to continue.');
-            }
-        })
-        .catch(error => {
-            showMessage('Request has failed. Please retry.');
-        })
-        .finally(() => {
-            hideProgressRing();
-            visiblity('btnConnect', false);
-        });
-}
-
-function refreshNetwork() {
-    showProgressRing();
-    visiblity('btnRefresh', true);
-    fetchData('/network-available', 15000)
-        .then(response => response.json())
-        .then(data => {
-            clearTable();
-            data.forEach((item, row) => {
-                addWiFi(++row, item.SSID, item.RSSI, item.BSSID);
+    .then(response => response.json())
+    .then(data => {
+        const result = [];
+        data.forEach((item, row) => {
+            result.push({
+                ssid: item.SSID,
+                signal: getSignal(item.RSSI)
             });
-        })
-        .catch(() => {
-            showMessage("Unable to make a request to scan for network available. Please retry.");
-        })
-        .finally(() => {
-            hideProgressRing();
-            visiblity('btnRefresh', false);
         });
-}
-
-function settings() {
-    document.getElementById('dlgTitle').innerText = 'Settings';
-    document.getElementById('dlgMessage').innerText = '';
-    document.getElementById('dlgMessageOption').style.display = 'block';
-    document.querySelector(".dialog-overlay").style.display = 'flex';
-}
-
-function onClickItemTable(x) {
-    x.classList.add('selected');
-    siblings = Array.from(x.parentNode.children);
-    siblings.forEach((sibling) => {
-        if (sibling !== x) {
-            sibling.classList.remove('selected');
-        }
+        return result.sort((a, b) => b.signal - a.signal);
     });
-    var value = x.querySelector('td p').textContent;
-    if (value) {
-        if (value !== '*HIDDEN*')
-            document.getElementById('ssid').value = value;
-        var passwordTag = document.getElementById('password');
-        passwordTag.value = '';
-        passwordTag.focus();
-    }
-}
-
-function addWiFi(row, ssid, rssi, bssid) {
-    var newRow = document.createElement('tr');
-    newRow.onclick = function () {
-        onClickItemTable(this);
-    };
-    var th = document.createElement('th');
-    var td1 = document.createElement('td');
-    var p = document.createElement('p');
-    var td2 = document.createElement('td');
-    var td3 = document.createElement('td');
-    th.textContent = row;
-    newRow.appendChild(th);
-    p.textContent = ssid ? ssid : '*HIDDEN*';
-    td1.appendChild(p);
-    newRow.appendChild(td1);
-    td2.textContent = getSignal(rssi);
-    newRow.appendChild(td2);
-    td3.textContent = bssid;
-    newRow.appendChild(td3);
-    document.getElementById('table-body').appendChild(newRow);
 }
 
 function getSignal(rssi) {
@@ -145,14 +28,125 @@ function getSignal(rssi) {
         percentage = 2 * (rssi + 100);
     }
     var rounded = Math.round(percentage * 10) / 10
-    return `${rounded}%`;
+    if (rounded < 10) {
+        return 0;
+    } else if (rounded >= 10 && rounded < 35) {
+        return 1;
+    } else if (rounded >= 35 && rounded < 60) {
+        return 2;
+    } else if (rounded >= 60 && rounded < 90) {
+        return 3;
+    } else if (rounded >= 90) {
+        return 4;
+    }
+
+    return 0;
 }
 
-const fetchData = (url, timeout = 5000) => {
-    return Promise.race([
-        fetch(url),
+// Function to populate the dropdown with available networks and their signal strengths
+async function populateNetworks() {
+    const ssidSelect = document.getElementById('ssid');
+    const loadingNetworks = document.getElementById('loading-networks');
+    const wifiForm = document.getElementById('wifi-form');
+
+    // Show loading indicator
+    loadingNetworks.style.display = 'block';
+
+    try {
+        const networks = await getAvailableNetworks();
+
+        networks.forEach(network => {
+            const option = document.createElement('option');
+            option.value = network.ssid;
+            option.textContent = network.ssid;
+
+            const signalStrength = document.createElement('span');
+            signalStrength.className = 'signal-strength';
+            signalStrength.innerHTML = getSignalStrengthIcon(network.signal);
+
+            option.appendChild(signalStrength);
+            ssidSelect.appendChild(option);
+        });
+    } catch (error) {
+        loadingNetworks.textContent = 'Failed to load networks. Please try again.';
+    } finally {
+        // Hide loading indicator and show form
+        loadingNetworks.style.display = 'none';
+        wifiForm.style.display = 'block';
+    }
+}
+
+// Function to return signal strength icons based on signal level
+function getSignalStrengthIcon(signal) {
+    if (signal >= 4) {
+        return ' 🔵🔵🔵🔵🔵';  // Excellent signal
+    } else if (signal >= 3) {
+        return ' 🔵🔵🔵🔵⚪';  // Good signal
+    } else if (signal >= 2) {
+        return ' 🔵🔵🔵⚪⚪';  // Fair signal
+    } else if (signal >= 1) {
+        return ' 🔵🔵⚪⚪⚪';  // Weak signal
+    } else {
+        return ' ⚪⚪⚪⚪⚪';  // No signal
+    }
+}
+
+// Function to validate the WiFi password
+function validatePassword(password) {
+    if (password.length < 8 || password.length > 63) {
+        alert('Password must be between 8 and 63 characters long.');
+        return false;
+    }
+    return true;
+}
+
+// Event listener for form submission
+document.getElementById('wifi-form').addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    const selectedNetwork = document.getElementById('ssid').value;
+    const networkPassword = document.getElementById('password').value;
+    const pin = document.getElementById('pin').value;
+    const connectButton = this.querySelector('button[type="submit"]');
+
+    // Validate the password length
+    if (!validatePassword(networkPassword)) {
+        return;
+    }
+
+    // Disable the connect button, show loading indicator, and change button text
+    connectButton.disabled = true;
+    connectButton.innerHTML = 'Connecting...';
+
+    var body = `ssid=${selectedNetwork}&pwd=${networkPassword}&pin=${pin}`;
+    Promise.race([
+        fetch('/setup', {
+            method: 'POST',
+            body: body
+        }),
         new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Timeout')), timeout)
+            setTimeout(() => reject(new Error('Timeout')), 20000)
         )
-    ]);
-};
+    ])
+    .then(response => {
+        if (!response.ok) {
+            alert(response.body);
+        } else {
+            alert('WiFi has been setup successfully. Please power-off the device and power it back on to continue.');
+        }
+    })
+    .catch(error => {
+        alert('Request has failed. Please retry.');
+    })
+    .finally(() => {
+        // Re-enable the button and revert button text
+        connectButton.disabled = false;
+        connectButton.innerHTML = 'Connect';
+
+        // Reset the form
+        this.reset();
+    });
+});
+
+// Initialize the dropdown on page load
+document.addEventListener('DOMContentLoaded', populateNetworks);

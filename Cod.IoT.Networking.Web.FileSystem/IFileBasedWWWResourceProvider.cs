@@ -4,6 +4,8 @@ namespace Cod.IoT.Networking.Web.FileSystem
     {
         string[] GetAllResourcePath();
 
-        string GetResourceContent(string path);
+        byte[] GetResourceContent(string path);
+
+        int GetResourceVersion(string path);
     }
 }

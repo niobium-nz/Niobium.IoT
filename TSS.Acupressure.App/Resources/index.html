@@ -1,62 +1,37 @@
-<!DOCTYPE html>
-<html>
+﻿<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Configure WiFi</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Device WiFi Provisioning</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>WiFi Networks</h1>
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">SSID</th>
-                    <th scope="col">Signal</th>
-                    <th scope="col">BSSID</th>
-                </tr>
-            </thead>
-            <tbody id="table-body">
-            </tbody>
-        </table>
-    </div>
-    <div class="div-container">
-        <div class="form-group">
-            <label for="username">WiFi SSID</label>
-            <input type="text" id="ssid" placeholder="Enter your WiFi name">
-        </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" pattern=".{8,}" placeholder="Enter your password">
-        </div>
-        <div class="form-group">
-            <label for="pin">Device PIN</label>
-            <input type="number" id="pin" maxlength="10" placeholder="Enter your Device PIN">
-        </div>
-        <span>
-            <button id="btnConnect" class="button button-primary" onclick="connectNetwork()">Connect</button>
-            <button id="btnRefresh" class="button button-warning" onclick="refreshNetwork()">Refresh</button>
-        </span>
-    </div>
-    <div class="dialog-overlay">
-        <div class="dialog-box">
-            <div class="dialog-header">
-                <h2 id="dlgTitle"></h2>
-                <button class="button-danger-close" onclick="hideMessage()">&#x2716;</button>
+    <div class="provisioning-container">
+        <h2>Connect Your Device to WiFi</h2>
+
+        <!-- Loading Indicator for Networks -->
+        <div id="loading-networks" class="loading-indicator">Loading networks...</div>
+
+        <form id="wifi-form" style="display: none;">
+            <div class="form-group">
+                <label for="ssid">Available Networks:</label>
+                <select id="ssid" name="ssid" required>
+                    <!-- Options will be populated dynamically -->
+                </select>
             </div>
-            <div class="dialog-body">
-                <p id="dlgMessage"></p>
-                <div id="dlgMessageOption">
-                    <button id="btnClearEEPROM" class="button button-primary" onclick="clearEEPROM()">Clear EEPROM</button>
-                    <br>
-                    <button id="btnRebootModule" class="button button-primary" onclick="rebootModule()">Reset Module</button>
-                </div>
+            <div class="form-group">
+                <label for="password">Network Password:</label>
+                <input type="password" id="password" name="password" placeholder="Enter Password" required>
             </div>
-        </div>
+            <div class="form-group">
+                <label for="pin">Device PIN:</label>
+                <input type="password" id="pin" name="pin" placeholder="Enter Device PIN" required>
+            </div>
+            <button type="submit">Connect</button>
+        </form>
     </div>
-    <div id="loader-wrapper">
-        <div id="loader"></div>
-    </div>
+
     <script src="script.js"></script>
 </body>
 </html>

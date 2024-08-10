@@ -29,12 +29,27 @@ namespace TSS.Acupressure.App
         {
             return ((string)(nanoFramework.Runtime.Native.ResourceUtility.GetObject(ResourceManager, id)));
         }
+        internal static byte[] GetBytes(Resources.BinaryResources id)
+        {
+            return ((byte[])(nanoFramework.Runtime.Native.ResourceUtility.GetObject(ResourceManager, id)));
+        }
         [System.SerializableAttribute()]
         internal enum StringResources : short
         {
             script = -22589,
             style = -5605,
             index = -2501,
+        }
+        [System.SerializableAttribute()]
+        internal enum BinaryResources : short
+        {
+            KFOmCnqEu92Fr1Mu4mxK = -14762,
+            KFOmCnqEu92Fr1Mu72xKOzY = -13425,
+            KFOmCnqEu92Fr1Mu4WxKOzY = 7437,
+            KFOmCnqEu92Fr1Mu7GxKOzY = 13338,
+            KFOmCnqEu92Fr1Mu5mxKOzY = 20676,
+            KFOmCnqEu92Fr1Mu7mxKOzY = 22659,
+            KFOmCnqEu92Fr1Mu7WxKOzY = 27179,
         }
     }
 }
