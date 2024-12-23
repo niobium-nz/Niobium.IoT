@@ -12,6 +12,7 @@ namespace Cod.IoT.Indicator
         protected Thread worker;
         protected GpioController gpioController;
         protected Hashtable pins = new();
+        protected Hashtable onOff = new();
         protected ArrayList blink = new();
         protected Hashtable blinkLastTime = new();
         protected Hashtable blinkInterval = new();
@@ -59,11 +60,49 @@ namespace Cod.IoT.Indicator
         public virtual void TurnOff(int pin)
         {
             GetPin(pin).Write(PinValue.Low);
+            if (!onOff.Contains(pin))
+            {
+                onOff.Add(pin, false);
+            }
+            else
+            {
+                onOff[pin] = false;
+            }
         }
 
         public virtual void TurnOn(int pin)
         {
             GetPin(pin).Write(PinValue.High);
+            if (!onOff.Contains(pin))
+            {
+                onOff.Add(pin, true);
+            }
+            else
+            {
+                onOff[pin] = true;
+            }
+        }
+
+        public bool IsOnOff(int pin)
+        {
+            if (onOff.Contains(pin))
+            {
+                return (bool)onOff[pin];
+            }
+
+            return false;
+        }
+
+        public void Switch(int pin, bool isOn)
+        {
+            if (isOn)
+            {
+                TurnOn(pin);
+            }
+            else
+            {
+                TurnOff(pin);
+            }
         }
 
         protected override void Dispose(bool disposing)
@@ -71,6 +110,7 @@ namespace Cod.IoT.Indicator
             if (disposing)
             {
                 Stop();
+                onOff.Clear();
                 pins.Clear();
                 blink.Clear();
                 blinkLastTime.Clear();

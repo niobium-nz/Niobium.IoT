@@ -2,9 +2,9 @@ namespace Cod.IoT.Indicator
 {
     public interface IIndicatorService : IService
     {
-        void TurnOn(int pin);
+        bool IsOnOff(int pin);
 
-        void TurnOff(int pin);
+        void Switch(int pin, bool isOn);
 
         void StartBlink(int pin, int interval = Constants.DefaultBlinkInterval);
 
