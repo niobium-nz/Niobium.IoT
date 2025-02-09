@@ -22,6 +22,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="IIndicatorService.cs" />
     <Compile Include="IndicatorService.cs" />
+    <Compile Include="ResetIndicator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

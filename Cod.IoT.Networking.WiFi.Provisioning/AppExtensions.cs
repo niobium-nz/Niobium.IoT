@@ -16,7 +16,8 @@ namespace Cod.IoT.Networking.WiFi.Provisioning
         public static IApp UseWiFiProvisioning(this IApp app,
             string wwwroot, IFileBasedWWWResourceProvider wwwresourceprovider,
             int buttonPin, byte pressPinValue, WiFiProvisioningOptions options, int ledPin = -1,
-            bool autoStartReadingGPIO = true, bool autoConnect = true, bool enableCommandSupport = true)
+            bool autoStartReadingGPIO = true, bool autoConnect = true, bool enableCommandSupport = true,
+            int resetButtonPin = 0, byte resetButtonPressPinValue = Button.Constants.LowPinValue, int resetLEDPin = 0)
         {
             if (!isLoaded)
             {
@@ -25,8 +26,12 @@ namespace Cod.IoT.Networking.WiFi.Provisioning
                 WiFiProvisioningCoordinator ??= new WiFiProvisioningCoordinator(buttonPin, pressPinValue, options, ledPin);
 
                 app.UseWiFi(autoConnect: autoConnect, enableCommandSupport: enableCommandSupport)
-                   .UseButton(autoStartReadingGPIO: autoStartReadingGPIO, enableCommandSupport: enableCommandSupport)
-                   .UseIndicator(enableCommandSupport)
+                   .UseButton(
+                        autoStartReadingGPIO: autoStartReadingGPIO, 
+                        enableCommandSupport: enableCommandSupport,
+                        resetButtonPin: resetButtonPin,
+                        resetButtonPressPinValue: resetButtonPressPinValue)
+                   .UseIndicator(enableCommandSupport: enableCommandSupport, resetLEDPin: resetLEDPin)
                    .UseWeb(wwwroot, wwwresourceprovider, new[] { WiFiAPScanHttpHandler, WiFiProvisioningHttpHandler })
                    .RegisterComponent(WiFiProvisioningCoordinator);
 

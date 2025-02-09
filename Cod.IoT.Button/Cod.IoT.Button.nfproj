@@ -20,6 +20,7 @@
   <ItemGroup>
     <Compile Include="AppExtensions.cs" />
     <Compile Include="AutoStartInitiator.cs" />
+    <Compile Include="ResetTrigger.cs" />
     <Compile Include="ButtonService.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="IButtonService.cs" />
