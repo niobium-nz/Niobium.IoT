@@ -136,6 +136,7 @@ namespace Cod.IoT.Indicator
 
         protected virtual void Blink()
         {
+            var shouldOn = true;
             while (!stop)
             {
                 lock (syncroot)
@@ -149,7 +150,16 @@ namespace Cod.IoT.Indicator
                         {
                             try
                             {
-                                GetPin(pin).Toggle();
+                                if (shouldOn)
+                                {
+                                    TurnOn(pin);
+                                }
+                                else
+                                {
+                                    TurnOff(pin);
+                                }
+
+                                shouldOn = !shouldOn;
                                 blinkLastTime[pin] = now;
                             }
                             catch
