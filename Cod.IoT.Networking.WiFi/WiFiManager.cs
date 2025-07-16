@@ -9,6 +9,7 @@ namespace Cod.IoT.Networking.WiFi
 {
     public class WiFiManager : GenericService, INetworkManager
     {
+        private bool networkRequested;
         protected Thread worker;
 
         public virtual bool IsEstablished => WifiNetworkHelper.Status == NetworkHelperStatus.NetworkIsReady;
@@ -56,16 +57,28 @@ namespace Cod.IoT.Networking.WiFi
                     continue;
                 }
 
-                if (!WifiNetworkHelper.Reconnect(true, token: new CancellationTokenSource(Constants.NetworkWaitInterval).Token))
+                if (!networkRequested)
                 {
-                    if (WifiNetworkHelper.HelperException != null)
+                    networkRequested = true;
+
+                    if (!WifiNetworkHelper.Reconnect(true, token: new CancellationTokenSource(Constants.NetworkWaitInterval).Token))
                     {
-                        Logger.LogError(WifiNetworkHelper.HelperException, $"WiFi connection failed with status {WifiNetworkHelper.Status}.");
+                        if (WifiNetworkHelper.HelperException != null)
+                        {
+                            Logger.LogError(WifiNetworkHelper.HelperException, $"WiFi connection failed with status {WifiNetworkHelper.Status}.");
+                        }
                     }
-                    continue;
+                }
+                else
+                {
+                    Thread.Sleep(Constants.NetworkWaitInterval);
                 }
 
-                OnEstablished();
+                if (IsEstablished)
+                {
+                    OnEstablished();
+                }
+
             } while (AutoConnect);
         }
 
