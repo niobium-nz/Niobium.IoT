@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35122.118
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cod.Platform.Devices.Provisioning.Functions", "Cod.Platform.Devices.Provisioning.Functions\Cod.Platform.Devices.Provisioning.Functions.csproj", "{BB1F5BF8-BCFE-4747-923B-37698409470D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cod.Platform.Devices.Provisioning.Helpers", "Cod.Platform.Devices.Provisioning.Helpers\Cod.Platform.Devices.Provisioning.Helpers.csproj", "{9B7E3232-6798-494A-BEC8-9748C822C3D2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{97466DB3-47E4-44A8-B709-FD161E62D837}"
+	ProjectSection(SolutionItems) = preProject
+		azure-pipelines.yml = azure-pipelines.yml
+	EndProjectSection
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Cod.Platform.Devices.Provisioning.Shared", "Cod.Platform.Devices.Provisioning.Shared\Cod.Platform.Devices.Provisioning.Shared.shproj", "{81E5C013-53E4-456F-9115-767E0A938D6F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cod.Platform.Devices.Provisioning.Abstractions", "Cod.Platform.Devices.Provisioning.Abstractions\Cod.Platform.Devices.Provisioning.Abstractions.csproj", "{B42269DF-598A-49A3-B065-B96698D36198}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BB1F5BF8-BCFE-4747-923B-37698409470D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB1F5BF8-BCFE-4747-923B-37698409470D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB1F5BF8-BCFE-4747-923B-37698409470D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB1F5BF8-BCFE-4747-923B-37698409470D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B7E3232-6798-494A-BEC8-9748C822C3D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B7E3232-6798-494A-BEC8-9748C822C3D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B7E3232-6798-494A-BEC8-9748C822C3D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B7E3232-6798-494A-BEC8-9748C822C3D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B42269DF-598A-49A3-B065-B96698D36198}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B42269DF-598A-49A3-B065-B96698D36198}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B42269DF-598A-49A3-B065-B96698D36198}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B42269DF-598A-49A3-B065-B96698D36198}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {456C9E2E-B3FB-4958-9678-4F759144CBDC}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Cod.Platform.Devices.Provisioning.Shared\Cod.Platform.Devices.Provisioning.Shared.projitems*{81e5c013-53e4-456f-9115-767e0a938d6f}*SharedItemsImports = 13
+		Cod.Platform.Devices.Provisioning.Shared\Cod.Platform.Devices.Provisioning.Shared.projitems*{b42269df-598a-49a3-b065-b96698d36198}*SharedItemsImports = 5
+	EndGlobalSection
+EndGlobal

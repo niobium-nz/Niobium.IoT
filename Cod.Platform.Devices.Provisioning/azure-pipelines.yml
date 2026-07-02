@@ -1,0 +1,97 @@
+name: '1.0$(Rev:.r)'
+trigger:
+- master
+
+variables:
+  buildAgentVmImage: 'windows-latest'
+  serviceConnection: 'Sponsorship'
+  resourceGroupName: 'cod-devices-provisioning'
+
+pool:
+  vmImage: $(buildAgentVmImage)
+
+resources: 
+  repositories:
+  - repository: devops
+    type: git
+    name: cod/Cod.Infrastructures
+    ref: main
+
+stages:
+- stage: Production
+  jobs:
+  - template: pipelines/jobs/GenericDotnetBuild.yml@devops
+    parameters:
+      nugetVSTSFeedID: 'cod/cod'
+      projectToPublish: '**/Cod.Platform.Devices.Provisioning.Functions.csproj'
+
+  - template: pipelines/jobs/FunctionAppInfrastructure.yml@devops
+    parameters:
+      azureServiceConnection: $(serviceConnection)
+      resourceGroupName: $(resourceGroupName)
+      appNamePrefix: 'CodDevicesProv'
+      enableKeyVault: true
+      enableStagingSlot: true
+      checkoutDevopsStep:
+        checkout: devops
+        
+  - job: IoT
+    dependsOn:
+      - Infrastructure
+    condition: succeeded()
+    pool:
+      vmImage: $(buildAgentVmImage)
+    steps:
+    - checkout: devops
+    - template: pipelines/steps/newIoTHub.yml@devops
+      parameters:
+        azureServiceConnection: $(serviceConnection)
+        resourceGroupName: $(resourceGroupName)
+        iotHubName: 'CodIoTHub'
+        primaryCert: 'MIIDfTCCAmWgAwIBAgIQZMsccPDHJ51AyTcVj/KzWjANBgkqhkiG9w0BAQsFADAeMRwwGgYDVQQDDBNYYXNpbm8gTmVzdCBSb290IENBMB4XDTIxMDkwNDA4Mjg1MFoXDTMxMDkwNDA4Mzg1MFowJjEkMCIGA1UEAwwbWGFzaW5vIE5lc3QgSW50ZXJtZWRpYXRlIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3s5MSPhde4sFQfE/Ikh0UV3MBDprdJJ2eISFnb1RcH+lHMTe25WdeU6iS0mICxlPFFuajFzyyqGY6ilIzDdD51FpT5AJi1j/cox5JOUx6py1i0CF3YBeHdAJW2i4XPEIuyW5ZFFi5RSxStCXi1jVV5fzJHwiwTCTt3BdwKHd7Uv+2pwDebR281xPFUL2vMljJ4m5vP/9gjWOc157bn/EYDwMCTG4wplrxc738HBi3rxirgtzAQV5rKMHEbd0Opn26kuAjlKtW3yFYUNQc7uzI76XSLtbgNHGuk2RJZXIRAqSe4MhYbIPNbbXm94vSyYLdtU8HB41B0OIQh77AOtrMQIDAQABo4GuMIGrMA4GA1UdDwEB/wQEAwICBDAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwEwJgYDVR0RBB8wHYIbWGFzaW5vIE5lc3QgSW50ZXJtZWRpYXRlIENBMBIGA1UdEwEB/wQIMAYBAf8CAQwwHwYDVR0jBBgwFoAUCwb/Y93zB3jF9k1ZZG9oUccm9ZswHQYDVR0OBBYEFFv0C1Kw3/XGiZAADm8tNTyIcWO1MA0GCSqGSIb3DQEBCwUAA4IBAQBkqwCahCRehZ6F/DcHUOLsFxaGwKw7N2bEsyOLKPnb/cRw3oMzceEu8ET1/kqPgjXJtCUIdGSpxtWuHuajCf9ZnQSYoSENQdf7+qUCf1mqCZrvBTG/S6e7ldLvLT1oYc4Pzk+XeJzGnClNwIvESSmgOFpkZqf1LZ0CfG2l9OrkjBYW1Fp/Wzt35LCJQnCGtP7zFiS8hoY2Mx5tM4k9ZRGIkM/H/zSvuPbE9Y/rBXtemerknjTZs4FHyzOGhhtGaUmtZVsaoL29azW07ZgPAer6j0KnA21YG2lP0tEMhp+480/Jt9u1nHBhedU7ZsZrXCkX9p6dxDOa07o5rg+XhZ9/'
+        secondaryCert: 'MIIDkTCCAnmgAwIBAgIQGpOCyL7e2a9EUWmBTcvwxTANBgkqhkiG9w0BAQsFADAeMRwwGgYDVQQDDBNYYXNpbm8gTmVzdCBSb290IENBMB4XDTIxMDkwNDA4Mjg1MFoXDTMxMDkwNDA4Mzg1MFowMDEuMCwGA1UEAwwlWGFzaW5vIE5lc3QgU2Vjb25kYXJ5IEludGVybWVkaWF0ZSBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMtehJNyuI8cxMADmldMRMSQbu8/9SbfjXqs2tyjZmtMoiuAzpZC4JYcT8bU2P1WkIpM1QLRnY+OegdKYH7tavYa42nxR2P178igp24+/i4weECJSlv/KOd8kK3+K3+E+PeUPgiBV7fudsj2B2D/qABnGoxkK7llgXO1UvoI212E5Nifv8710QWqlGtP7gdQsbYSzFMqPoXNeZzK8Y2nSnd1TCcp4wNC22EIIafg87eCboZg2KUsGjOp/1xO37fJx7HrbQERG9NaBTmBWEX703/yGjcAjvkr7Q4A6rOnEF8rEYzaj0nCirXS6vY509dhEJQDKIKy9YkQNDVZrBtUK+kCAwEAAaOBuDCBtTAOBgNVHQ8BAf8EBAMCAgQwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMBMDAGA1UdEQQpMCeCJVhhc2lubyBOZXN0IFNlY29uZGFyeSBJbnRlcm1lZGlhdGUgQ0EwEgYDVR0TAQH/BAgwBgEB/wIBDDAfBgNVHSMEGDAWgBQLBv9j3fMHeMX2TVlkb2hRxyb1mzAdBgNVHQ4EFgQUFs8Nh76GQ7jZ/A3BCw3s0yx6abwwDQYJKoZIhvcNAQELBQADggEBAJS8iP7w0+kV1thUYvJ7LLUjR2k/59ACK/EiQi3hEpxk+3kVpsOiPyK68Obz2Qs3Mm+BbcMahQqcGz6j96UX2+mLwWZ3rkRv2pFz5PrZWayQ/2WcN/CdThkhAW9wRC6APH8nIasmhB6gg0TLkAXbGD2k6FcVTUC87Qk9ujzNDuM8YsE5A4Y9ZEVc/R/u3z4aw/46cJtL5JrzgZbg7ZBYnCkRz9kI2a80Rv1UNruCKb7tHcOJIA5hAMJrB5hlqnT2JSFdxtZH1cU4I8738b9cJn0CWhzoJBLp5L7pCcEfBSGholacDHmkW5uHQROXEPB+F5za6yRx8p4ue9uH8RD4zZw='
+
+  - job: Configuration
+    dependsOn:
+      - IoT
+      - Infrastructure
+    condition: succeeded()
+    pool:
+      vmImage: $(buildAgentVmImage)
+    variables:
+      functionAppName: $[dependencies.Infrastructure.outputs['infrastructureOutputs.functionAppName']]
+      functionAppHostname: $[dependencies.Infrastructure.outputs['infrastructureOutputs.functionAppHostname']]
+      iotHubHostName: $[dependencies.IoT.outputs['newIoTHubOutputs.hostName']]
+      keyVaultUrl: $[dependencies.Infrastructure.outputs['infrastructureOutputs.keyVaultUrl']]
+      applicationInsightsInstrumentationKey: $[dependencies.Infrastructure.outputs['infrastructureOutputs.applicationInsightsInstrumentationKey']]
+    steps:
+    - checkout: none
+    - task: AzureAppServiceSettings@1
+      displayName: 'Update AppSettings'
+      inputs:
+        azureSubscription: $(serviceConnection)
+        appName: $(functionAppName)
+        resourceGroupName: $(resourceGroupName)
+        appSettings: |
+          [
+            {
+              "name": "IOT_HUB_HOSTNAME",
+                "value": "$(iotHubHostName)",
+              "slotSetting": false
+            },
+            {
+              "name": "DEVICE_ID_SECRET",
+              "value": "@Microsoft.KeyVault(SecretUri=$(keyVaultUrl)/secrets/DEVICE-ID-SECRET/)",
+              "slotSetting": false
+            },
+            {
+              "name": "DEVICE_PIN_SECRET",
+              "value": "@Microsoft.KeyVault(SecretUri=$(keyVaultUrl)/secrets/DEVICE-PIN-SECRET/)",
+              "slotSetting": false
+            }
+          ]
+      
+  - template: pipelines/jobs/FunctionAppDeploy.yml@devops
+    parameters:
+      serviceConnection: $(serviceConnection)
+      resourceGroupName: $(resourceGroupName)
