@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>008b44db-abea-4472-a68d-4940d152c060</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Cod.IoT.Abstrations</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)DeviceCommandOutput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DeviceCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IJsonSerializer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IApp.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IAction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ICommandService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IComponent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IConfigurationProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IExtension.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ITaskService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)JSON.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LoggerFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PingCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RebootCommand.cs" />
+  </ItemGroup>
+</Project>
